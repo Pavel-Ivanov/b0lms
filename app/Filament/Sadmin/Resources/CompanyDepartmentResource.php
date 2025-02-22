@@ -46,6 +46,7 @@ class CompanyDepartmentResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Название')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_published')
                     ->label('Опубликовано')
