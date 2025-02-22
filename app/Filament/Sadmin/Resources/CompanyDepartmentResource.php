@@ -7,6 +7,7 @@ use App\Filament\Sadmin\Resources\CompanyDepartmentResource\RelationManagers;
 use App\Models\CompanyDepartment;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -67,7 +68,23 @@ class CompanyDepartmentResource extends Resource
                 Tables\Actions\EditAction::make()
                     ->hiddenLabel(),
                 Tables\Actions\DeleteAction::make()
-                    ->hiddenLabel(),
+                    ->hiddenLabel()
+                    ->action(function ($data, $record) {
+                        if ($record->users()->count() > 0) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Это Подразделение используется')
+                                ->body('Это Подразделение используется в Пользователи и не может быть удалено')
+                                ->send();
+                            return;
+                        }
+                        Notification::make()
+                            ->success()
+                            ->title('Подразделение удалено')
+                            ->body('Подразделение успешно удалено')
+                            ->send();
+                        $record->delete();
+                    }),
             ])
             ->bulkActions([
 /*                Tables\Actions\BulkActionGroup::make([

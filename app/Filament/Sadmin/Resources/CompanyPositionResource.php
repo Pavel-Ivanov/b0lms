@@ -7,6 +7,7 @@ use App\Filament\Sadmin\Resources\CompanyPositionResource\RelationManagers;
 use App\Models\CompanyPosition;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -68,7 +69,23 @@ class CompanyPositionResource extends Resource
                 Tables\Actions\EditAction::make()
                     ->hiddenLabel(),
                 Tables\Actions\DeleteAction::make()
-                    ->hiddenLabel(),
+                    ->hiddenLabel()
+                    ->action(function ($data, $record) {
+                        if ($record->users()->count() > 0) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Эта Должность используется')
+                                ->body('Эта Должность используется в Пользователи и не может быть удалена')
+                                ->send();
+                            return;
+                        }
+                        Notification::make()
+                            ->success()
+                            ->title('Должность удалена')
+                            ->body('Должность успешно удалена')
+                            ->send();
+                        $record->delete();
+                    }),
             ])
             ->bulkActions([
 /*                Tables\Actions\BulkActionGroup::make([
