@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             CompanyDepartmentSeeder::class,
             CompanyPositionSeeder::class,
             CourseTypeSeeder::class,
+            CourseLevelSeeder::class,
         ]);
     }
 }
