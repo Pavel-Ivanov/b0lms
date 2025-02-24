@@ -1,0 +1,168 @@
+<?php
+
+namespace App\Filament\Sadmin\Resources;
+
+use App\Filament\Sadmin\Resources\CourseResource\Pages;
+use App\Filament\Sadmin\Resources\CourseResource\RelationManagers;
+use App\Models\Course;
+use Filament\Forms;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+class CourseResource extends Resource
+{
+    protected static ?string $model = Course::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?int $navigationSort = 1;
+    protected static ?string $modelLabel = 'Курс';
+    protected static ?string $pluralModelLabel = 'Курсы';
+    protected static ?string $navigationGroup = 'Академия';
+    protected static ?string $navigationLabel = 'Курсы';
+
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Tabs::make('Tabs')
+                    ->tabs([
+                        Tabs\Tab::make('Главная')
+                            ->schema([
+                                Group::make()
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->label('Название')
+                                            ->required()
+                                            ->maxLength(255),
+                                        Textarea::make('announcement')
+                                            ->label('Анонс'),
+                                        RichEditor::make('description')
+                                            ->label('Описание'),
+                                    ]),
+                                Group::make()
+                                    ->schema([
+                                        Forms\Components\TextInput::make('duration')
+                                            ->label('Длительность (минуты)')
+                                            ->numeric(),
+                                        Checkbox::make('is_published')
+                                            ->label('Опубликован'),
+                                    ])
+                                ->columns(2),
+                                Group::make()
+                                    ->schema([
+                                        Group::make()
+                                            ->schema([
+                                                Forms\Components\Select::make('course_type_id')
+                                                    ->label('Тип')
+                                                    ->relationship('courseType', 'name')
+                                                    ->required(),
+                                                Forms\Components\Select::make('course_level_id')
+                                                    ->label('Уровень')
+                                                    ->relationship('courseLevel', 'name')
+                                                    ->required(),
+                                                Forms\Components\Select::make('course_category_id')
+                                                    ->label('Категория')
+                                                    ->relationship('courseCategory', 'name')
+                                                    ->required(),
+
+                                        ]),
+                                        Group::make()
+                                            ->schema([
+                                                SpatieMediaLibraryFileUpload::make('Course Image')
+                                                    ->collection('course_images'),
+                                        ]),
+                                    ])
+                                    ->columns(2),
+                            ]),
+                        Tabs\Tab::make('Уроки')
+                            ->schema([
+                                // ...
+                            ]),
+                        Tabs\Tab::make('Обучение')
+                            ->schema([
+                                // ...
+                            ]),
+                    ])
+                    ->persistTab()
+                    ->columnSpan('full')
+                    ->activeTab(1),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                SpatieMediaLibraryImageColumn::make('Course Image')
+                    ->label('Изображение')
+                    ->collection('course_images'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Название')
+                    ->searchable(),
+/*                Tables\Columns\TextColumn::make('duration')
+                    ->numeric()
+                    ->sortable(),*/
+                Tables\Columns\TextColumn::make('courseCategory.name')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('courseType.name')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('courseLevel.name')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('is_published')
+                    ->label('Опубликован')
+                    ->boolean(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListCourses::route('/'),
+            'create' => Pages\CreateCourse::route('/create'),
+            'edit' => Pages\EditCourse::route('/{record}/edit'),
+        ];
+    }
+}
