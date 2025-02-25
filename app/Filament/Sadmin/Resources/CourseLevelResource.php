@@ -18,7 +18,7 @@ class CourseLevelResource extends Resource
     protected static ?string $model = CourseLevel::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-scale';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
     protected static ?string $modelLabel = 'Уровень сложности курса';
     protected static ?string $pluralModelLabel = 'Уровни сложности курсов';
     protected static ?string $navigationGroup = 'Академия';

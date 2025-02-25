@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Tabs;
@@ -18,6 +19,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -90,7 +92,33 @@ class CourseResource extends Resource
                             ]),
                         Tabs\Tab::make('Уроки')
                             ->schema([
-                                // ...
+                                Repeater::make('lessons')
+                                    ->label('Уроки')
+                                    ->relationship('Lessons')
+                                    ->schema([
+                                        Forms\Components\Select::make('course_id')
+                                            ->relationship('course', 'name')
+                                            ->required(),
+                                        Forms\Components\TextInput::make('name')
+                                            ->required()
+                                            ->maxLength(255),
+                                        Forms\Components\Textarea::make('announcement')
+                                            ->columnSpanFull(),
+                                        Forms\Components\Textarea::make('lesson_content')
+                                            ->columnSpanFull(),
+                                        Forms\Components\TextInput::make('position')
+                                            ->required()
+                                            ->numeric()
+                                            ->default(0),
+                                        Forms\Components\Toggle::make('is_published')
+                                            ->required(),
+                                    ])
+                                    ->itemLabel(fn (array $state): ?string => $state['position'] . '. ' . $state['name'] ?? null)
+                                    ->columns()
+                                    ->collapsible()
+                                    ->collapsed()
+                                    ->addActionLabel('Добавить урок')
+                                    ->defaultItems(0),
                             ]),
                         Tabs\Tab::make('Обучение')
                             ->schema([
@@ -112,22 +140,19 @@ class CourseResource extends Resource
                     ->collection('course_images'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Название')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
 /*                Tables\Columns\TextColumn::make('duration')
                     ->numeric()
                     ->sortable(),*/
                 Tables\Columns\TextColumn::make('courseCategory.name')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Категория'),
                 Tables\Columns\TextColumn::make('courseType.name')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Тип'),
                 Tables\Columns\TextColumn::make('courseLevel.name')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('is_published')
-                    ->label('Опубликован')
-                    ->boolean(),
+                    ->label('Уровень'),
+                Tables\Columns\ToggleColumn::make('is_published')
+                    ->label('Опубликован'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -138,16 +163,34 @@ class CourseResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('courseCategory')
+                    ->label('Категория')
+                    ->relationship('courseCategory', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('courseType')
+                    ->label('Тип')
+                    ->relationship('courseType', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('courseLevel')
+                    ->label('Уровень')
+                    ->relationship('courseLevel', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->hiddenLabel(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->persistSortInSession()
+            ->persistSearchInSession()
+            ->persistFiltersInSession();
     }
 
     public static function getRelations(): array
