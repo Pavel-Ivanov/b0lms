@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -44,6 +45,16 @@ class Course extends Model implements HasMedia
     public function courseCategory(): BelongsTo
     {
         return $this->belongsTo(CourseCategory::class);
+    }
+
+    public function lessons(): HasMany
+    {
+        return $this->hasMany(Lesson::class)->orderBy('position');
+    }
+
+    public function publishedLessons(): HasMany
+    {
+        return $this->lessons()->published();
     }
 
 
