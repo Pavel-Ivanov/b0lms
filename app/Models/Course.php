@@ -57,5 +57,10 @@ class Course extends Model implements HasMedia
         return $this->lessons()->published();
     }
 
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
 
 }
