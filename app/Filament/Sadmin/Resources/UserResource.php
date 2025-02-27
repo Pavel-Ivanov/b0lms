@@ -4,8 +4,12 @@ namespace App\Filament\Sadmin\Resources;
 
 use App\Filament\Sadmin\Resources\UserResource\Pages;
 use App\Filament\Sadmin\Resources\UserResource\RelationManagers;
+use App\Models\Course;
+use App\Models\Enrollment;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -27,24 +31,72 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('company_department_id')
-                    ->relationship('companyDepartment', 'name')
-                    ->required(),
-                Forms\Components\Select::make('company_position_id')
-                    ->relationship('companyPosition', 'name')
-                    ->required(),
+                Tabs::make('Tabs')
+                    ->tabs([
+                        Tabs\Tab::make('Информация')
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('email')
+                                    ->email()
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\Select::make('company_department_id')
+                                    ->relationship('companyDepartment', 'name')
+                                    ->required(),
+                                Forms\Components\Select::make('company_position_id')
+                                    ->relationship('companyPosition', 'name')
+                                    ->required(),
 //                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->maxLength(255),
+                                Forms\Components\TextInput::make('password')
+                                    ->password()
+                                    ->required()
+                                    ->maxLength(255),
+                            ]),
+                        Tabs\Tab::make('Курсы')
+                            ->schema([
+                                Repeater::make('enrollments')
+                                    ->label('Курсы')
+                                    ->relationship('enrollments')
+                                    ->schema([
+                                        Forms\Components\Select::make('course_id')
+                                            ->label('Курс')
+                                            ->relationship('course', 'name')
+                                            ->required(),
+                                        Forms\Components\Select::make('user_id')
+                                            ->label('Студент')
+                                            ->relationship('user', 'name')
+                                            ->required(),
+                                        Forms\Components\DateTimePicker::make('enrollment_date')
+                                            ->label('Дата начала обучения')
+                                            ->required(),
+                                        Forms\Components\DatePicker::make('completion_deadline')
+                                            ->label('Дата окончания обучения')
+                                            ->date(),
+                                    ])
+                                    ->itemLabel(function (array $state): ?string {
+                                        //dump($state);
+                                        if (empty($state['course_id'])) {
+                                            return '';
+                                        }
+                                        return Course::where('id', $state['id'])->first()->name;
+                                    })
+                                    ->columns()
+                                    ->collapsible()
+                                    ->collapsed()
+//                                    ->addActionLabel('Добавить назначение')
+                                    ->defaultItems(0),
+
+                            ]),
+/*                        Tabs\Tab::make('Tab 3')
+                            ->schema([
+                                // ...
+                            ]),*/
+                    ])
+                    ->persistTab()
+                    ->columnSpan('full')
+                    ->activeTab(1),
             ]);
     }
 
