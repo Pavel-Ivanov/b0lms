@@ -5,6 +5,8 @@ namespace App\Filament\Sadmin\Resources;
 use App\Filament\Sadmin\Resources\CourseResource\Pages;
 use App\Filament\Sadmin\Resources\CourseResource\RelationManagers;
 use App\Models\Course;
+use App\Models\Enrollment;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
@@ -28,7 +30,7 @@ class CourseResource extends Resource
 {
     protected static ?string $model = Course::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-book-open';
     protected static ?int $navigationSort = 1;
     protected static ?string $modelLabel = 'Курс';
     protected static ?string $pluralModelLabel = 'Курсы';
@@ -94,7 +96,7 @@ class CourseResource extends Resource
                             ->schema([
                                 Repeater::make('lessons')
                                     ->label('Уроки')
-                                    ->relationship('Lessons')
+                                    ->relationship('lessons')
                                     ->schema([
                                         Forms\Components\Select::make('course_id')
                                             ->relationship('course', 'name')
@@ -122,7 +124,36 @@ class CourseResource extends Resource
                             ]),
                         Tabs\Tab::make('Обучение')
                             ->schema([
-                                // ...
+                                Repeater::make('enrollments')
+                                    ->label('Назначения курсов')
+                                    ->relationship('enrollments')
+                                    ->schema([
+                                        Forms\Components\Select::make('course_id')
+                                            ->label('Курс')
+                                            ->relationship('course', 'name')
+                                            ->required(),
+                                        Forms\Components\Select::make('user_id')
+                                            ->label('Студент')
+                                            ->relationship('user', 'name')
+                                            ->required(),
+                                        Forms\Components\DateTimePicker::make('enrollment_date')
+                                            ->label('Дата начала обучения')
+                                            ->required(),
+                                        Forms\Components\DatePicker::make('completion_deadline')
+                                            ->label('Дата окончания обучения')
+                                            ->date(),
+                                    ])
+                                    ->itemLabel(function (array $state): ?string {
+                                        //dump($state);
+                                        if (empty($state['user_id'])) {
+                                            return '';
+                                        }
+                                        return Enrollment::where('id', $state['id'])->first()->enrollmentInfo();                                    })
+                                    ->columns()
+                                    ->collapsible()
+                                    ->collapsed()
+                                    ->addActionLabel('Добавить назначение')
+                                    ->defaultItems(0),
                             ]),
                     ])
                     ->persistTab()

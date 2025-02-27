@@ -18,7 +18,7 @@ class CourseCategoryResource extends Resource
     protected static ?string $model = CourseCategory::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-folder-arrow-down';
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 6;
     protected static ?string $modelLabel = 'Категория курса';
     protected static ?string $pluralModelLabel = 'Категории курсов';
     protected static ?string $navigationGroup = 'Академия';

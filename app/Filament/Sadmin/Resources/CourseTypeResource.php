@@ -18,11 +18,10 @@ class CourseTypeResource extends Resource
     protected static ?string $model = CourseType::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
     protected static ?string $modelLabel = 'Тип курса';
     protected static ?string $pluralModelLabel = 'Типы курсов';
     protected static ?string $navigationGroup = 'Академия';
-
     protected static ?string $navigationLabel = 'Типы';
 
 

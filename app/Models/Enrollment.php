@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 class Enrollment extends Model
 {
@@ -23,5 +24,11 @@ class Enrollment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function enrollmentInfo(): string
+    {
+        return $this->user->name . ' / ' . Carbon::parse($this->enrollment_date)->format("d.m.Y") . ' - ' . Carbon::parse($this->completion_deadline)->format("d.m.Y")  ;
+    }
+
 
 }
