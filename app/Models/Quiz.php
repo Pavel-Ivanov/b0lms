@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Quiz extends Model
 {
@@ -26,9 +27,15 @@ class Quiz extends Model
         return $query->where('is_published', true);
     }
 
-/*    public function questions(): BelongsToMany
+    public function course(): BelongsTo
     {
-        return $this->belongsToMany(Question::class);
-    }*/
+        return $this->belongsTo(Course::class);
+    }
+
+
+    /*    public function questions(): BelongsToMany
+        {
+            return $this->belongsToMany(Question::class);
+        }*/
 
 }
