@@ -68,6 +68,11 @@ class Course extends Model implements HasMedia
         return $this->hasMany(Quiz::class);
     }
 
+    public function questions(): HasMany
+    {
+        return $this->hasMany(Question::class);
+    }
+
     public function courseDates(): string
     {
         return Carbon::parse($this->enrollment_date)->format("d.m.Y") . ' - ' . Carbon::parse($this->completion_deadline)->format("d.m.Y")  ;
