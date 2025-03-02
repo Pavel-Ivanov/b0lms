@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Question extends Model
 {
     protected $fillable = [
-        'course_id',
+        'lesson_id',
         'question_text',
         'answer_explanation',
         'more_info_link',
@@ -19,8 +19,8 @@ class Question extends Model
         return $this->hasMany(QuestionOption::class);
     }*/
 
-    public function course(): BelongsTo
+    public function lesson(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Lesson::class);
     }
 }
