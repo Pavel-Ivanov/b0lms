@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Question extends Model
 {
@@ -14,10 +15,10 @@ class Question extends Model
         'more_info_link',
     ];
 
-/*    public function questionOptions(): HasMany
+    public function questionOptions(): HasMany
     {
         return $this->hasMany(QuestionOption::class);
-    }*/
+    }
 
     public function lesson(): BelongsTo
     {
