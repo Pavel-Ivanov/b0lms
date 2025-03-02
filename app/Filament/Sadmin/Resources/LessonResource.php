@@ -6,6 +6,8 @@ use App\Filament\Sadmin\Resources\LessonResource\Pages;
 use App\Filament\Sadmin\Resources\LessonResource\RelationManagers;
 use App\Models\Lesson;
 use Filament\Forms;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -31,28 +33,47 @@ class LessonResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('course_id')
-                    ->label('Курс')
-                    ->relationship('course', 'name')
-                    ->required(),
-                Forms\Components\TextInput::make('name')
-                    ->label('Название урока')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('announcement')
-                    ->label('Анонс')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('lesson_content')
-                    ->label('Содержание урока')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('position')
-                    ->label('Позиция урока')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\Toggle::make('is_published')
-                    ->label('Опубликовать')
-                    ->required(),
+                Tabs::make('Tabs')
+                    ->tabs([
+                        Tabs\Tab::make('Основная информация')
+                            ->schema([
+                                Forms\Components\Select::make('course_id')
+                                    ->label('Курс')
+                                    ->relationship('course', 'name')
+                                    ->required(),
+                                Forms\Components\TextInput::make('name')
+                                    ->label('Название урока')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\Textarea::make('announcement')
+                                    ->label('Анонс')
+                                    ->columnSpanFull(),
+                                Forms\Components\TextInput::make('position')
+                                    ->label('Позиция урока')
+                                    ->required()
+                                    ->numeric()
+                                    ->default(0),
+                                Forms\Components\Toggle::make('is_published')
+                                    ->label('Опубликовать')
+                                    ->required(),
+                            ]),
+                        Tabs\Tab::make('Содержание урока')
+                            ->schema([
+                                Forms\Components\RichEditor::make('lesson_content')
+                                    ->label('Содержание урока')
+                                    ->fileAttachmentsDisk('public')
+                                    ->fileAttachmentsDirectory('lesson_images')
+                                    ->fileAttachmentsVisibility('public')
+                                    ->columnSpanFull(),
+                            ]),
+                        Tabs\Tab::make('Контрольные вопросы')
+                            ->schema([
+                                // ...
+                            ]),
+                    ])
+                    ->persistTab()
+                    ->columnSpan('full')
+                    ->activeTab(1),
             ]);
     }
 
@@ -70,7 +91,8 @@ class LessonResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('position')
                     ->label('Позиция')
-                    ->numeric(),
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_published')
                     ->label('Опубликован'),
                 Tables\Columns\TextColumn::make('created_at')
