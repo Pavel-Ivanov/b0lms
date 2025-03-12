@@ -99,15 +99,18 @@ class CourseResource extends Resource
                                     ->relationship('lessons')
                                     ->schema([
                                         Forms\Components\Select::make('course_id')
+                                            ->label('Курс')
                                             ->relationship('course', 'name')
                                             ->required(),
                                         Forms\Components\TextInput::make('name')
+                                            ->label('Название')
                                             ->required()
                                             ->maxLength(255),
-                                        Forms\Components\Textarea::make('announcement')
-                                            ->columnSpanFull(),
-                                        Forms\Components\Textarea::make('lesson_content')
-                                            ->columnSpanFull(),
+/*                                        Forms\Components\Textarea::make('announcement')
+                                            ->label('Анонс')
+                                            ->columnSpanFull(),*/
+/*                                        Forms\Components\Textarea::make('lesson_content')
+                                            ->columnSpanFull(),*/
                                         Forms\Components\TextInput::make('position')
                                             ->required()
                                             ->numeric()
@@ -116,13 +119,14 @@ class CourseResource extends Resource
                                             ->required(),
                                     ])
                                     ->itemLabel(fn (array $state): ?string => $state['position'] . '. ' . $state['name'] ?? null)
+                                    ->orderColumn('position')
                                     ->columns()
                                     ->collapsible()
                                     ->collapsed()
                                     ->addActionLabel('Добавить урок')
                                     ->defaultItems(0),
                             ]),
-                        Tabs\Tab::make('Обучение')
+                        Tabs\Tab::make('Назначения')
                             ->schema([
                                 Repeater::make('enrollments')
                                     ->label('Назначения курсов')

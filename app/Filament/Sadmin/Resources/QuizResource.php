@@ -18,10 +18,10 @@ class QuizResource extends Resource
     protected static ?string $model = Quiz::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
-    protected static ?int $navigationSort = 7;
+//    protected static ?int $navigationSort = 7;
     protected static ?string $modelLabel = 'Экзамен';
     protected static ?string $pluralModelLabel = 'Экзамены';
-    protected static ?string $navigationGroup = 'Академия';
+    protected static ?string $navigationGroup = 'Справочники';
     protected static ?string $navigationLabel = 'Экзамены';
 
 

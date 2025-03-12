@@ -21,8 +21,8 @@ class CourseCategoryResource extends Resource
     protected static ?int $navigationSort = 6;
     protected static ?string $modelLabel = 'Категория курса';
     protected static ?string $pluralModelLabel = 'Категории курсов';
-    protected static ?string $navigationGroup = 'Академия';
-    protected static ?string $navigationLabel = 'Категории';
+    protected static ?string $navigationGroup = 'Справочники';
+    protected static ?string $navigationLabel = 'Категории курсов';
 
 
     public static function form(Form $form): Form

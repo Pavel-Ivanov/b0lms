@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -18,7 +19,7 @@ class QuestionResource extends Resource
     protected static ?string $model = Question::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-question-mark-circle';
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 3;
     protected static ?string $modelLabel = 'Вопрос';
     protected static ?string $pluralModelLabel = 'Вопросы';
     protected static ?string $navigationGroup = 'Академия';
@@ -33,9 +34,10 @@ class QuestionResource extends Resource
                     [
                         Forms\Components\Select::make('lesson_id')
                             ->label('Урок')
+                            ->required()
                             ->columnSpanFull()
 //                            ->visibleOn('edit')
-                            ->relationship('lesson', 'name')
+                            ->relationship('lesson', 'name'),
                     ])
             );
 
@@ -57,12 +59,13 @@ class QuestionResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('question_text')
+                    ->label('Текст вопроса')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('lesson.name')
                     ->label('Урок')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('question_text')
-                    ->label('Текст вопроса')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('more_info_link')
                     ->label('Ссылка на доп. инф.')
                     ->searchable()
@@ -77,10 +80,15 @@ class QuestionResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('lesson_id')
+                    ->label('Урок')
+                    ->relationship('lesson', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->hiddenLabel(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -112,16 +120,23 @@ class QuestionResource extends Resource
                 ->label('Текст вопроса')
                 ->required()
                 ->columnSpanFull(),
-/*            Forms\Components\Repeater::make('questionOptions')
+            Forms\Components\Repeater::make('questionOptions')
                 ->required()
                 ->relationship()
                 ->columnSpanFull()
                 ->schema([
                     Forms\Components\TextInput::make('option')
+                        ->label('Ответ')
                         ->required()
                         ->hiddenLabel(),
-                    Forms\Components\Checkbox::make('correct'),
-                ])->columns(),*/
+                    Forms\Components\Checkbox::make('correct')
+                    ->label('Правильный ответ'),
+                ])
+                ->columns()
+                ->addActionLabel('Добавить ответ')
+                ->reorderable(true)
+                ->reorderableWithButtons()
+                ->cloneable(),
             Forms\Components\Textarea::make('answer_explanation')
                 ->label('Объяснение правильного ответа')
                 ->columnSpanFull(),

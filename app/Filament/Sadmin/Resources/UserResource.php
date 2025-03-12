@@ -80,7 +80,7 @@ class UserResource extends Resource
                                         if (empty($state['course_id'])) {
                                             return '';
                                         }
-                                        return Course::where('id', $state['id'])->first()->name;
+                                        return Course::where('id', $state['id'])->first()->name ?? '';
                                     })
                                     ->columns()
                                     ->collapsible()
