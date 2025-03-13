@@ -6,6 +6,7 @@ namespace App\Models;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
@@ -79,6 +80,11 @@ class User extends Authenticatable implements FilamentUser
     public function courses(): HasManyThrough
     {
         return $this->hasManyThrough(Course::class, Enrollment::class, 'user_id', 'id', 'id', 'course_id');
+    }
+
+    public function completedLessons(): BelongsToMany
+    {
+        return $this->belongsToMany(Lesson::class)->published();
     }
 
 }

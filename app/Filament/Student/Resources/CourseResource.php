@@ -5,6 +5,7 @@ namespace App\Filament\Student\Resources;
 use App\Filament\Student\Resources\CourseResource\Pages;
 use App\Filament\Student\Resources\CourseResource\Pages\ViewCourse;
 use App\Filament\Student\Resources\CourseResource\RelationManagers;
+use App\Filament\Student\Resources\LessonResource\Pages\ViewLesson;
 use App\Models\Course;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -80,6 +81,7 @@ class CourseResource extends Resource
         return [
             'index' => Pages\ListCourses::route('/'),
             'view'  => Pages\ViewCourse::route('/{record}'),
+            'lessons.view' => ViewLesson::route('/{parent}/lessons/{record}'),
 //            'create' => Pages\CreateCourse::route('/create'),
 //            'edit' => Pages\EditCourse::route('/{record}/edit'),
         ];

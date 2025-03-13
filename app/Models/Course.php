@@ -73,5 +73,19 @@ class Course extends Model implements HasMedia
         return Carbon::parse($this->enrollment_date)->format("d.m.Y") . ' - ' . Carbon::parse($this->completion_deadline)->format("d.m.Y")  ;
     }
 
+    public function progress(): array
+    {
+        $lessons   = $this->publishedLessons;
+/*        $completed = auth()->user()->completedLessons()
+            ->whereIn('lesson_id', $lessons->pluck('id'))
+            ->count();*/
+        $completed =1;
+
+        return [
+            'value'      => $completed,
+            'max'        => $lessons->count(),
+            'percentage' => (int) floor(($completed / max(1, $lessons->count())) * 100),
+        ];
+    }
 
 }

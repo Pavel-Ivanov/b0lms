@@ -3,9 +3,11 @@
 namespace App\Filament\Student\Resources\CourseResource\Pages;
 
 use App\Filament\Student\Resources\CourseResource;
+use App\Infolists\Components\CourseProgress;
 use App\Infolists\Components\ListLessons;
 use Filament\Actions;
 use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\TextEntry\TextEntrySize;
 use Filament\Infolists\Infolist;
@@ -38,8 +40,15 @@ class ViewCourse extends ViewRecord
                 Grid::make()
                     ->columns(1)
                     ->schema([
-/*                        ListLessons::make('Lessons')
-                            ->course($this->getRecord()),*/
+/*                        CourseProgress::make()
+                            ->course($this->getRecord()->course),*/
+                        ListLessons::make('Уроки')
+                            ->course($this->getRecord()),
+/*                        RepeatableEntry::make('lessons')
+                            ->schema([
+                                TextEntry::make('name')
+                                ->hiddenLabel(),
+                            ])*/
                     ])
                     ->columnSpan(1),
             ])
