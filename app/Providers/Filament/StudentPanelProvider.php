@@ -23,8 +23,10 @@ class StudentPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
+            ->default()
             ->id('student')
             ->path('student')
+            ->login()
             ->colors([
                 'primary' => Color::Gray,
             ])

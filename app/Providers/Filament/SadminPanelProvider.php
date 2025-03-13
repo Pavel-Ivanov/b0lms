@@ -23,7 +23,7 @@ class SadminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
+//            ->default()
             ->id('sadmin')
             ->path('sadmin')
             ->login()
