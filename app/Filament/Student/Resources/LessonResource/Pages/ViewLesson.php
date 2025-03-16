@@ -39,8 +39,10 @@ class ViewLesson extends ViewRecord
                     ->schema([
 //                        CompleteButton::make(),
                         TextEntry::make('lesson_content')
+                            ->hiddenLabel()
                             ->html()
-                            ->size(TextEntrySize::Medium),
+//                            ->size(TextEntrySize::Medium)
+                        ,
 /*                        LessonPaginator::make()
                             ->currentLesson($this->getRecord()),*/
                     ])
