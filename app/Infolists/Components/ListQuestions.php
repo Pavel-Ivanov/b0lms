@@ -47,42 +47,7 @@ class ListQuestions extends Component
         return $this->questions;
     }
 
-/*    public function submit(): void
-    {
-        $result = 0;
 
-        $test = Test::create([
-            'user_id'    => auth()->id(),
-            'quiz_id'    => $this->record->id,
-            'result'     => 0,
-            'ip_address' => request()->ip(),
-            'time_spent' => now()->timestamp - $this->startTimeSeconds,
-        ]);
-
-        foreach ($this->questionsAnswers as $key => $option) {
-            info($option);
-            $status = 0;
-
-            if (! empty($option) && QuestionOption::find($option)->correct) {
-                $status = 1;
-                $result++;
-            }
-
-            TestAnswer::create([
-                'user_id'     => auth()->id(),
-                'test_id'     => $test->id,
-                'question_id' => $this->questions[$key]->id,
-                'option_id'   => $option ?? null,
-                'correct'     => $status,
-            ]);
-        }
-
-        $test->update([
-            'result' => $result,
-        ]);
-
-        $this->redirectIntended(ResultResource::getUrl('view', ['record' => $test]));
-    }*/
 
 
 }

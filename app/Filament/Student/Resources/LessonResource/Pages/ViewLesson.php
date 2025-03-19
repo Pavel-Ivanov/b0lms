@@ -9,6 +9,7 @@ use App\Infolists\Components\CompleteButton;
 use App\Infolists\Components\CourseProgress;
 use App\Infolists\Components\LessonPaginator;
 use App\Infolists\Components\ListLessons;
+use App\Infolists\Components\ListQuestions;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\TextEntry\TextEntrySize;
@@ -43,6 +44,9 @@ class ViewLesson extends ViewRecord
                             ->html()
 //                            ->size(TextEntrySize::Medium)
                         ,
+                        ListQuestions::make('lesson_questions')
+                        ->lesson($this->getRecord()),
+
 /*                        LessonPaginator::make()
                             ->currentLesson($this->getRecord()),*/
                     ])
@@ -77,5 +81,42 @@ class ViewLesson extends ViewRecord
             $lesson->course,
             $lesson->getNext(),
         ]));
+    }
+
+    public function submit(): void
+    {
+        $result = 0;
+
+        /*        $test = Test::create([
+                    'user_id'    => auth()->id(),
+                    'quiz_id'    => $this->record->id,
+                    'result'     => 0,
+                    'ip_address' => request()->ip(),
+                    'time_spent' => now()->timestamp - $this->startTimeSeconds,
+                ]);
+
+                foreach ($this->questionsAnswers as $key => $option) {
+                    info($option);
+                    $status = 0;
+
+                    if (! empty($option) && QuestionOption::find($option)->correct) {
+                        $status = 1;
+                        $result++;
+                    }
+
+                    TestAnswer::create([
+                        'user_id'     => auth()->id(),
+                        'test_id'     => $test->id,
+                        'question_id' => $this->questions[$key]->id,
+                        'option_id'   => $option ?? null,
+                        'correct'     => $status,
+                    ]);
+                }
+
+                $test->update([
+                    'result' => $result,
+                ]);
+
+                $this->redirectIntended(ResultResource::getUrl('view', ['record' => $test]));*/
     }
 }
