@@ -71,51 +71,50 @@ class LessonResource extends Resource
                         Tabs\Tab::make('Контрольные вопросы')
                             ->schema([
                                 Forms\Components\Repeater::make('questions')
-                                ->label('Контрольные вопросы')
-                                ->relationship('questions')
-                                ->schema([
-                                    Forms\Components\Textarea::make('question_text')
-                                        ->label('Текст вопроса')
-                                        ->required()
-                                        ->columnSpanFull(),
-                                    Forms\Components\Repeater::make('questionOptions')
-                                        ->required()
-                                        ->relationship()
-                                        ->columnSpanFull()
-                                        ->schema([
-                                            Forms\Components\TextInput::make('option')
-                                                ->label('Ответ')
-                                                ->required()
-                                                ->hiddenLabel(),
-                                            Forms\Components\Checkbox::make('correct')
-                                                ->label('Правильный ответ'),
-                                        ])
+                                    ->hiddenLabel()
+//                                    ->label('Контрольные вопросы')
+                                    ->relationship('questions')
+                                    ->schema([
+                                        Forms\Components\Textarea::make('question_text')
+                                            ->label('Текст вопроса')
+                                            ->required()
+                                            ->columnSpanFull(),
+                                        Forms\Components\Repeater::make('questionOptions')
+                                            ->required()
+                                            ->relationship()
+                                            ->columnSpanFull()
+                                            ->schema([
+                                                Forms\Components\TextInput::make('option')
+                                                    ->label('Ответ')
+                                                    ->required()
+                                                    ->hiddenLabel(),
+                                                Forms\Components\Checkbox::make('correct')
+                                                    ->label('Правильный ответ'),
+                                            ])
+                                            ->columns()
+                                            ->addActionLabel('Добавить ответ')
+                                            ->reorderable(true)
+                                            ->reorderableWithButtons()
+                                            ->cloneable(),
+                                        Forms\Components\Textarea::make('answer_explanation')
+                                            ->label('Объяснение правильного ответа')
+                                            ->columnSpanFull(),
+                                        Forms\Components\TextInput::make('more_info_link')
+                                            ->label('Ссылка на дополнительную информацию')
+                                            ->columnSpanFull(),
+                                    ])
+                                        ->itemLabel(function (array $state): ?string {
+                                            if (empty($state['question_text'])) {
+                                                return '';
+                                            }
+                                            return $state['question_text'];
+                                        })
                                         ->columns()
-                                        ->addActionLabel('Добавить ответ')
-                                        ->reorderable(true)
-                                        ->reorderableWithButtons()
-                                        ->cloneable(),
-                                    Forms\Components\Textarea::make('answer_explanation')
-                                        ->label('Объяснение правильного ответа')
-                                        ->columnSpanFull(),
-                                    Forms\Components\TextInput::make('more_info_link')
-                                        ->label('Ссылка на дополнительную информацию')
-                                        ->columnSpanFull(),
-                                ])
-                                    ->itemLabel(function (array $state): ?string {
-//                                        dump($state);
-                                        if (empty($state['question_text'])) {
-                                            return '';
-                                        }
-                                        return $state['question_text'];
-//                                        return Question::where('id', $state['id'])->first()->question_text;
-                                    })
-                                    ->columns()
-                                ->collapsible()
-                                ->collapsed()
-//                                ->addable(false)
-                                ->addActionLabel('Добавить вопрос')
-                                ->defaultItems(0),
+                                    ->collapsible()
+                                    ->collapsed()
+    //                                ->addable(false)
+                                    ->addActionLabel('Добавить вопрос')
+                                    ->defaultItems(0),
                             ]),
                     ])
                     ->persistTab()
@@ -139,6 +138,9 @@ class LessonResource extends Resource
                     ->label('Позиция')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('questions_count')
+                    ->label('Кол-во вопросов')
+                    ->counts('questions'),
                 Tables\Columns\ToggleColumn::make('is_published')
                     ->label('Опубликован'),
                 Tables\Columns\TextColumn::make('created_at')
