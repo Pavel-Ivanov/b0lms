@@ -103,17 +103,18 @@ class LessonResource extends Resource
                                         ->columnSpanFull(),
                                 ])
                                     ->itemLabel(function (array $state): ?string {
-                                        //dump($state);
-/*                                        if (empty($state['user_id'])) {
+//                                        dump($state);
+                                        if (empty($state['question_text'])) {
                                             return '';
-                                        }*/
-                                        return Question::where('id', $state['id'])->first()->question_text;
+                                        }
+                                        return $state['question_text'];
+//                                        return Question::where('id', $state['id'])->first()->question_text;
                                     })
                                     ->columns()
                                 ->collapsible()
                                 ->collapsed()
-                                ->addable(false)
-//                                ->addActionLabel('Добавить вопрос')
+//                                ->addable(false)
+                                ->addActionLabel('Добавить вопрос')
                                 ->defaultItems(0),
                             ]),
                     ])
