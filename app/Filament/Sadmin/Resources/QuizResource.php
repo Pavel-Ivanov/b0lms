@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class QuizResource extends Resource
 {
     protected static ?string $model = Quiz::class;
-
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
 //    protected static ?int $navigationSort = 7;
     protected static ?string $modelLabel = 'Экзамен';
