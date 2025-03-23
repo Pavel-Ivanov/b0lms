@@ -72,15 +72,14 @@ class LessonResource extends Resource
                             ->schema([
                                 Forms\Components\Repeater::make('quizzes')
                                     ->hiddenLabel()
-//                                    ->label('Контрольные вопросы')
                                     ->relationship('quizzes')
                                     ->schema([
                                         Forms\Components\TextInput::make('name')
-                                            ->label('Название вопроса')
+                                            ->label('Название теста')
                                             ->required()
                                             ->columnSpanFull(),
                                         Forms\Components\Textarea::make('description')
-                                            ->label('Описание вопроса')
+                                            ->label('Описание теста')
                                             ->columnSpanFull(),
                                         Forms\Components\Checkbox::make('is_published')
                                             ->label('Опубликован'),
