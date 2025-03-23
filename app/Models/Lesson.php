@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Lesson extends Model
 {
@@ -34,10 +35,16 @@ class Lesson extends Model
         return $this->belongsTo(Course::class);
     }
 
-    public function questions(): HasMany
+    public function quizzes(): HasMany
     {
-        return $this->hasMany(Question::class);
+        return $this->hasMany(Quiz::class);
     }
+
+    public function questions(): HasManyThrough
+    {
+        return $this->hasManyThrough(Lesson::class, Quiz::class, 'quiz_id', 'question_id', 'id', 'id');
+    }
+
     public function getNext(): ?self
     {
         $lessons = $this->course->publishedLessons()->get();

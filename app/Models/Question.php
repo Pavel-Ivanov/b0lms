@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Question extends Model
 {
     protected $fillable = [
-        'lesson_id',
+        'quiz_id',
         'question_text',
         'answer_explanation',
         'more_info_link',
@@ -20,8 +20,8 @@ class Question extends Model
         return $this->hasMany(QuestionOption::class);
     }
 
-    public function lesson(): BelongsTo
+    public function quiz(): BelongsTo
     {
-        return $this->belongsTo(Lesson::class);
+        return $this->belongsTo(Quiz::class);
     }
 }
