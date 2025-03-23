@@ -19,7 +19,7 @@ class EnrollmentResource extends Resource
     protected static ?string $model = Enrollment::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-plus';
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
     protected static ?string $modelLabel = 'Назначение курса';
     protected static ?string $pluralModelLabel = 'Назначения курсов';
     protected static ?string $navigationGroup = 'Академия';

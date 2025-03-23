@@ -19,7 +19,7 @@ class QuestionResource extends Resource
     protected static ?string $model = Question::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-question-mark-circle';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
     protected static ?string $modelLabel = 'Вопрос';
     protected static ?string $pluralModelLabel = 'Вопросы';
     protected static ?string $navigationGroup = 'Академия';
@@ -32,12 +32,12 @@ class QuestionResource extends Resource
             ->schema(array_merge(
                     static::questionForm(),
                     [
-                        Forms\Components\Select::make('lesson_id')
-                            ->label('Урок')
+                        Forms\Components\Select::make('quiz_id')
+                            ->label('Тест')
                             ->required()
                             ->columnSpanFull()
 //                            ->visibleOn('edit')
-                            ->relationship('lesson', 'name'),
+                            ->relationship('quiz', 'name'),
                     ])
             );
 
@@ -63,8 +63,8 @@ class QuestionResource extends Resource
                     ->label('Текст вопроса')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('lesson.name')
-                    ->label('Урок')
+                Tables\Columns\TextColumn::make('quiz.name')
+                    ->label('Тест')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('more_info_link')
                     ->label('Ссылка на доп. инф.')
@@ -80,9 +80,9 @@ class QuestionResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('lesson_id')
-                    ->label('Урок')
-                    ->relationship('lesson', 'name')
+                SelectFilter::make('quiz_id')
+                    ->label('Тест')
+                    ->relationship('quiz', 'name')
                     ->searchable()
                     ->preload(),
             ])
