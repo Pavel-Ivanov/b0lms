@@ -3,8 +3,11 @@
 namespace App\Infolists\Components;
 
 use App\Filament\Student\Resources\CourseResource;
+use App\Models\Course;
+use App\Models\Lesson;
 use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\Concerns\HasName;
+use Illuminate\Support\Collection;
 
 class ListLessons extends Component
 {
@@ -12,9 +15,9 @@ class ListLessons extends Component
 
     protected string $view = 'infolists.components.list-lessons';
 
-    protected $course;
-    protected $lessons;
-    protected $activeLesson = null;
+    protected Course $course;
+    protected Collection $lessons;
+    protected Lesson |null $activeLesson = null;
 
     final public function __construct(string $name)
     {
@@ -27,11 +30,10 @@ class ListLessons extends Component
         return app(static::class, ['name' => $name]);
     }
 
-
     public function course($course)
     {
         $this->course  = $course;
-        $this->lessons = $course->publishedLessons;
+        $this->lessons = $course->lessonsWithQuestions;
 
         return $this;
     }
