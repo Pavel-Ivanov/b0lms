@@ -10,9 +10,15 @@ use App\Infolists\Components\CourseProgress;
 use App\Infolists\Components\LessonPaginator;
 use App\Infolists\Components\ListLessons;
 use App\Infolists\Components\ListQuestions;
+use App\Models\Lesson;
+use Awcodes\Matinee\Matinee;
 use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\TextEntry\TextEntrySize;
+use Filament\Support\Enums\ActionSize;
+use Hugomyb\FilamentMediaAction\Infolists\Components\Actions\MediaAction;
+use Illuminate\Contracts\View\View;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Contracts\Support\Htmlable;
@@ -42,13 +48,15 @@ class ViewLesson extends ViewRecord
                         TextEntry::make('lesson_content')
                             ->hiddenLabel()
                             ->html()
-//                            ->size(TextEntrySize::Medium)
+                            ->size(TextEntrySize::Medium)
                         ,
-                        ListQuestions::make('lesson_questions')
-                        ->lesson($this->getRecord()),
-
-/*                        LessonPaginator::make()
-                            ->currentLesson($this->getRecord()),*/
+                        TextEntry::make('media')
+                            ->hiddenLabel()
+                            ->formatStateUsing(function (Lesson $record)
+                                {
+                                    $data = $this->getRecord()->media;
+                                    return view('infolists.components.lesson-video', ['data' => $data]);
+                                })
                     ])
                     ->columnSpan(2),
                 Grid::make()

@@ -33,7 +33,7 @@ class ListLessons extends Component
     public function course($course)
     {
         $this->course  = $course;
-        $this->lessons = $course->lessonsWithQuestions;
+        $this->lessons = $course->lessonsWithQizzes;
 
         return $this;
     }
@@ -71,5 +71,14 @@ class ListLessons extends Component
             'parent' => $this->course,
             'record' => $lesson,
         ]);
+    }
+
+    public function getUrlQuiz($quiz)
+    {
+        return '#';
+/*        return CourseResource::getUrl('quizzes.view', [
+            'parent' => $this->course,
+            'record' => $quiz,
+        ]);*/
     }
 }

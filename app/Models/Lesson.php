@@ -8,10 +8,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Lesson extends Model
+class Lesson extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
+
     protected $fillable = [
         'course_id',
         'name',
@@ -19,10 +23,12 @@ class Lesson extends Model
         'lesson_content',
         'position',
         'is_published',
+        'video',
     ];
 
     protected $casts = [
         'is_published' => 'boolean',
+        'video' => 'json',
     ];
 
     public function scopePublished(Builder $query): void
@@ -42,7 +48,7 @@ class Lesson extends Model
 
     public function questions(): HasManyThrough
     {
-        return $this->hasManyThrough(Lesson::class, Quiz::class, 'quiz_id', 'question_id', 'id', 'id');
+        return $this->hasManyThrough(Question::class, Quiz::class);
     }
 
     public function getNext(): ?self
