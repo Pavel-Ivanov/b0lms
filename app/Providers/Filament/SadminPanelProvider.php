@@ -53,6 +53,9 @@ class SadminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->viteTheme('resources/css/filament/sadmin/theme.css')
+//            ->viteTheme('"C:\Herd\b0lms\resources\css\filament\sadmin\theme.css"')
+            ;
     }
 }
