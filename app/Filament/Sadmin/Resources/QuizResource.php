@@ -10,6 +10,8 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -130,7 +132,15 @@ class QuizResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('lesson')
+                    ->label('Урок')
+                    ->relationship('lesson', 'name')
+                    ->searchable()
+                    ->preload(),
+                Filter::make('is_published')
+                    ->label('Опубликован')
+                    ->toggle()
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
