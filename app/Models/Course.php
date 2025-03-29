@@ -58,9 +58,14 @@ class Course extends Model implements HasMedia
         return $this->lessons()->published();
     }
 
+    public function lessonsWithQizzes(): HasMany
+    {
+        return $this->lessons()->with('quizzes');
+    }
+
     public function lessonsWithQuestions(): HasMany
     {
-        return $this->publishedLessons()->with('questions');
+        return $this->lessons()->with('questions');
     }
 
     public function enrollments(): HasMany
@@ -68,10 +73,10 @@ class Course extends Model implements HasMedia
         return $this->hasMany(Enrollment::class);
     }
 
-    public function quizzes(): HasMany
+/*    public function quizzes(): HasMany
     {
         return $this->hasMany(Quiz::class);
-    }
+    }*/
 
     public function courseDates(): string
     {

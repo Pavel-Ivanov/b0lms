@@ -98,25 +98,18 @@ class CourseResource extends Resource
                                     ->label('Уроки')
                                     ->relationship('lessons')
                                     ->schema([
-                                        Forms\Components\Select::make('course_id')
-                                            ->label('Курс')
-                                            ->relationship('course', 'name')
-                                            ->required(),
                                         Forms\Components\TextInput::make('name')
                                             ->label('Название')
                                             ->required()
                                             ->maxLength(255),
-/*                                        Forms\Components\Textarea::make('announcement')
-                                            ->label('Анонс')
-                                            ->columnSpanFull(),*/
-/*                                        Forms\Components\Textarea::make('lesson_content')
-                                            ->columnSpanFull(),*/
                                         Forms\Components\TextInput::make('position')
                                             ->required()
                                             ->numeric()
                                             ->default(0),
                                         Forms\Components\Toggle::make('is_published')
                                             ->required(),
+                                        Forms\Components\Hidden::make('course_id')
+                                            ->default(fn (): ?int => $form->model['id'] ?? null)
                                     ])
                                     ->itemLabel(fn (array $state): ?string => $state['position'] . '. ' . $state['name'] ?? null)
                                     ->orderColumn('position')
@@ -132,10 +125,6 @@ class CourseResource extends Resource
                                     ->label('Назначения курсов')
                                     ->relationship('enrollments')
                                     ->schema([
-                                        Forms\Components\Select::make('course_id')
-                                            ->label('Курс')
-                                            ->relationship('course', 'name')
-                                            ->required(),
                                         Forms\Components\Select::make('user_id')
                                             ->label('Студент')
                                             ->relationship('user', 'name')
@@ -146,9 +135,10 @@ class CourseResource extends Resource
                                         Forms\Components\DatePicker::make('completion_deadline')
                                             ->label('Дата окончания обучения')
                                             ->date(),
+                                        Forms\Components\Hidden::make('course_id')
+                                            ->default(fn (): ?int => $form->model['id'] ?? null)
                                     ])
                                     ->itemLabel(function (array $state): ?string {
-                                        //dump($state);
                                         if (empty($state['user_id'])) {
                                             return '';
                                         }
@@ -177,15 +167,15 @@ class CourseResource extends Resource
                     ->label('Название')
                     ->searchable()
                     ->sortable(),
-/*                Tables\Columns\TextColumn::make('duration')
-                    ->numeric()
-                    ->sortable(),*/
                 Tables\Columns\TextColumn::make('courseCategory.name')
                     ->label('Категория'),
                 Tables\Columns\TextColumn::make('courseType.name')
                     ->label('Тип'),
                 Tables\Columns\TextColumn::make('courseLevel.name')
                     ->label('Уровень'),
+                Tables\Columns\TextColumn::make('lessons_count')
+                    ->label('Кол-во уроков')
+                    ->counts('lessons'),
                 Tables\Columns\ToggleColumn::make('is_published')
                     ->label('Опубликован'),
                 Tables\Columns\TextColumn::make('created_at')
