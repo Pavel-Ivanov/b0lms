@@ -87,7 +87,11 @@ class CourseResource extends Resource
                                         Group::make()
                                             ->schema([
                                                 SpatieMediaLibraryFileUpload::make('Course Image')
-                                                    ->collection('course_images'),
+                                                    ->collection('course_images')
+//                                                    ->disk('public')
+//                                                    ->directory('course_images')
+//                                                    ->visibility('public')
+                                                ,
                                         ]),
                                     ])
                                     ->columns(2),
