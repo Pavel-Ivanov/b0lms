@@ -83,6 +83,33 @@ class Course extends Model implements HasMedia
         return Carbon::parse($this->enrollment_date)->format("d.m.Y") . ' - ' . Carbon::parse($this->completion_deadline)->format("d.m.Y")  ;
     }
 
+    public function getSteps(): array
+    {
+        // Получаем все уроки курса вместе с квизами
+        $lessons = $this->lessons()->with('quizzes')->get();
+
+        // Создаём последовательность шагов
+        $steps = [];
+        foreach ($lessons as $lesson) {
+            // Урок добавляется в последовательность
+            $steps[] = [
+                'stepable_id' => $lesson->id,
+                'stepable_type' => Lesson::class,
+            ];
+
+            // Добавляем связанные с уроком квизы
+            foreach ($lesson->quizzes as $quiz) {
+                $steps[] = [
+                    'stepable_id' => $quiz->id,
+                    'stepable_type' => Quiz::class,
+                ];
+            }
+        }
+
+        return $steps;
+    }
+
+
     public function progress(): array
     {
         $lessons   = $this->publishedLessons;

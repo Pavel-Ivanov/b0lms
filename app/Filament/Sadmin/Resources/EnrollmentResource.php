@@ -5,7 +5,9 @@ namespace App\Filament\Sadmin\Resources;
 use App\Filament\Sadmin\Resources\EnrollmentResource\Pages;
 use App\Filament\Sadmin\Resources\EnrollmentResource\RelationManagers;
 use App\Models\Enrollment;
+use DB;
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -44,6 +46,17 @@ class EnrollmentResource extends Resource
                 Forms\Components\DatePicker::make('completion_deadline')
                     ->label('Дата окончания обучения')
                     ->date(),
+                Forms\Components\Actions::make([
+                    Action::make('steps')
+                        ->label('Создать план курса')
+                        ->icon('heroicon-m-star')
+                        ->requiresConfirmation()
+                        ->action(function (Enrollment $record) {
+//                            dump($record);
+                            static::setSteps($record);
+                        }),
+
+                ]),
             ]);
     }
 
@@ -111,5 +124,42 @@ class EnrollmentResource extends Resource
             'create' => Pages\CreateEnrollment::route('/create'),
             'edit' => Pages\EditEnrollment::route('/{record}/edit'),
         ];
+    }
+
+    public static function setSteps($record): void
+    {
+        $course = $record->course;
+        if (!$course) {
+            throw new \Exception('Enrollment must be related to a course.');
+        }
+
+        $userId = $record->user_id;
+        if (!$userId) {
+            throw new \Exception('Enrollment must be associated with a user.');
+        }
+
+        $stepsData = $course->getSteps();
+//        dump($stepsData);
+        $steps = [];
+        foreach ($stepsData as $index => $step) {
+            $steps[] = [
+                'enrollment_id' => $record->id,
+                'course_id' => $course->id,
+                'user_id' => $userId,
+                'stepable_id' => $step['stepable_id'],
+                'stepable_type' => $step['stepable_type'],
+                'position' => $index + 1,
+                'is_completed' => false,
+            ];
+        }
+
+//        dump($steps);
+
+        DB::table('enrollment_steps')->where('enrollment_id', $record->id)->delete();
+
+        // Записываем новые шаги в таблицу
+        DB::table('enrollment_steps')->insert($steps);
+
+
     }
 }
