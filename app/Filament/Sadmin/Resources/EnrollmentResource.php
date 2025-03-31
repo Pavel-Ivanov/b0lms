@@ -49,12 +49,17 @@ class EnrollmentResource extends Resource
                 Forms\Components\Actions::make([
                     Action::make('steps')
                         ->label('Создать план курса')
-                        ->icon('heroicon-m-star')
+                        ->icon('heroicon-o-clipboard-document-list')
+                        ->color('success')
                         ->requiresConfirmation()
                         ->action(function (Enrollment $record) {
 //                            dump($record);
                             static::setSteps($record);
-                        }),
+                        })
+                    ->hidden(function (Enrollment $record) {
+                        return $record->hasSteps();
+                    })
+                    ,
 
                 ]),
             ]);
@@ -128,6 +133,10 @@ class EnrollmentResource extends Resource
 
     public static function setSteps($record): void
     {
+        if ($record->steps_created) {
+            return;
+        }
+
         $course = $record->course;
         if (!$course) {
             throw new \Exception('Enrollment must be related to a course.');
@@ -155,11 +164,10 @@ class EnrollmentResource extends Resource
 
 //        dump($steps);
 
-        DB::table('enrollment_steps')->where('enrollment_id', $record->id)->delete();
-
-        // Записываем новые шаги в таблицу
+//        DB::table('enrollment_steps')->where('enrollment_id', $record->id)->delete();
         DB::table('enrollment_steps')->insert($steps);
 
+        $record->update(['is_steps_created' => true]);
 
     }
 }

@@ -12,8 +12,18 @@ class Enrollment extends Model
         'course_id',
         'user_id',
         'enrollment_date',
-        'completion_deadline'
+        'completion_deadline',
+        'is_steps_created',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'enrollment_date' => 'datetime',
+            'completion_deadline' => 'date',
+            'is_steps_created' => 'boolean',
+        ];
+    }
 
     public function course(): BelongsTo
     {
@@ -24,6 +34,12 @@ class Enrollment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function hasSteps(): bool
+    {
+        return (bool) $this->is_steps_created;
+    }
+
 
     public function enrollmentInfo(): string
     {
