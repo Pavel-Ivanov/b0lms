@@ -5,10 +5,14 @@ namespace App\Filament\Sadmin\Resources;
 use App\Filament\Sadmin\Resources\EnrollmentResource\Pages;
 use App\Filament\Sadmin\Resources\EnrollmentResource\RelationManagers;
 use App\Models\Enrollment;
+use App\Models\Lesson;
+use App\Models\Quiz;
 use DB;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
@@ -32,36 +36,83 @@ class EnrollmentResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('course_id')
-                    ->label('Курс')
-                    ->relationship('course', 'name')
-                    ->required(),
-                Forms\Components\Select::make('user_id')
-                    ->label('Студент')
-                    ->relationship('user', 'name')
-                    ->required(),
-                Forms\Components\DateTimePicker::make('enrollment_date')
-                    ->label('Дата начала обучения')
-                    ->required(),
-                Forms\Components\DatePicker::make('completion_deadline')
-                    ->label('Дата окончания обучения')
-                    ->date(),
-                Forms\Components\Actions::make([
-                    Action::make('steps')
-                        ->label('Создать план курса')
-                        ->icon('heroicon-o-clipboard-document-list')
-                        ->color('success')
-                        ->requiresConfirmation()
-                        ->action(function (Enrollment $record) {
-//                            dump($record);
-                            static::setSteps($record);
-                        })
-                    ->hidden(function (Enrollment $record) {
-                        return $record->hasSteps();
-                    })
-                    ,
+                Tabs::make('Tabs')
+                    ->tabs([
+                        Tabs\Tab::make('Основные данные')
+                            ->schema([
+                                Forms\Components\Select::make('course_id')
+                                    ->label('Курс')
+                                    ->relationship('course', 'name')
+                                    ->required(),
+                                Forms\Components\Select::make('user_id')
+                                    ->label('Студент')
+                                    ->relationship('user', 'name')
+                                    ->required(),
+                                Forms\Components\DateTimePicker::make('enrollment_date')
+                                    ->label('Дата начала обучения')
+                                    ->required(),
+                                Forms\Components\DatePicker::make('completion_deadline')
+                                    ->label('Дата окончания обучения')
+                                    ->date(),
+                            ]),
+                        Tabs\Tab::make('План обучения')
+                            ->schema([
+/*                                Forms\Components\Repeater::make('steps')
+                                    ->hiddenLabel()
+                                    ->relationship('steps')
+                                    ->schema([
+                                        Forms\Components\Hidden::make('enrollment_id'),
+                                        Forms\Components\Hidden::make('course_id'),
+                                        Forms\Components\Hidden::make('user_id'),
+                                        Forms\Components\Hidden::make('stepable_id'),
+                                        Forms\Components\Hidden::make('stepable_type'),
+                                        Forms\Components\Hidden::make('position'),
+                                        Forms\Components\Hidden::make('is_completed'),
+                                    ])
+                                    ->afterStateHydrated(function (Forms\Components\Repeater $component, $state) {
+                                        if (empty($state)) {
+                                            $enrollment = Enrollment::find(request()->route('record'));
+                                            if ($enrollment) {
+                                                $steps = $enrollment->steps()->orderBy('position')->get();
+                                                $component->state($steps->toArray());
+                                            }
+                                        }
+                                    })
+                                        ->itemLabel(function (array $state): ?string {
+                                        if (empty($state['stepable_type'])) {
+                                            return '';
+                                        }
+                                        return match ($state['stepable_type']) {
+                                            Lesson::class => 'Урок - ' . Lesson::findOrFail($state['stepable_id'])->name,
+                                            Quiz::class => 'Тест',
+                                            default => '',
+                                        };
 
-                ]),
+                                    })
+                                    ->columns()
+                                    ->collapsible()
+                                    ->collapsed()
+                                    ->addable(false)
+//                                    ->addActionLabel('Добавить тест')
+                                    ->defaultItems(0),*/
+                                Forms\Components\Actions::make([
+                                    Action::make('set_steps')
+                                        ->label('Создать план обучения')
+                                        ->icon('heroicon-o-clipboard-document-list')
+                                        ->color('success')
+                                        ->requiresConfirmation()
+                                        ->action(function (Enrollment $record) {
+                                            static::setSteps($record);
+                                        })
+                                        ->hidden(function (Enrollment $record) {
+                                            return $record->hasSteps();
+                                        }),
+                                ]),
+                            ]),
+                    ])
+                    ->persistTab()
+                    ->columnSpan('full')
+                    ->activeTab(1),
             ]);
     }
 
@@ -83,6 +134,8 @@ class EnrollmentResource extends Resource
                     ->label('Дата окончания')
                     ->date('d.m.Y')
                     ->sortable(),
+                Tables\Columns\IconColumn::make('is_steps_created')
+                    ->label('План обучения'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -133,7 +186,7 @@ class EnrollmentResource extends Resource
 
     public static function setSteps($record): void
     {
-        if ($record->steps_created) {
+        if ($record->is_steps_created) {
             return;
         }
 
@@ -161,13 +214,24 @@ class EnrollmentResource extends Resource
                 'is_completed' => false,
             ];
         }
-
 //        dump($steps);
 
-//        DB::table('enrollment_steps')->where('enrollment_id', $record->id)->delete();
-        DB::table('enrollment_steps')->insert($steps);
+        $insertedCount = DB::table('enrollment_steps')->insertOrIgnore($steps);
 
-        $record->update(['is_steps_created' => true]);
+        if ($insertedCount === count($steps)) {
+            $record->update(['is_steps_created' => true]);
 
+            Notification::make()
+                ->success()
+                ->title('Шаги успешно созданы')
+                ->send();
+        }
+        else {
+            Notification::make()
+                ->warning()
+                ->title('Не все шаги были созданы')
+                ->body("Создано {$insertedCount} из " . count($steps) . " шагов.")
+                ->send();
+        }
     }
 }

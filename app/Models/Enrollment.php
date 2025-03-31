@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 class Enrollment extends Model
@@ -35,9 +36,14 @@ class Enrollment extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function steps()
+    {
+        return $this->hasMany(EnrollmentStep::class);
+    }
+
     public function hasSteps(): bool
     {
-        return (bool) $this->is_steps_created;
+        return $this->is_steps_created;
     }
 
 

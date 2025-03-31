@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\StepType;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EnrollmentStep extends Model
 {
@@ -20,11 +21,15 @@ class EnrollmentStep extends Model
     ];
 
     protected $casts = [
-//        'step_type' => StepType::class,
         'is_completed' => 'boolean',
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
     ];
 
+
+    public function enrollment(): BelongsTo
+    {
+        return $this->belongsTo(Enrollment::class);
+    }
 
 }
