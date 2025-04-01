@@ -5,6 +5,9 @@ namespace App\Filament\Student\Resources\CourseResource\Pages;
 use App\Filament\Student\Resources\CourseResource;
 use App\Infolists\Components\CourseProgress;
 use App\Infolists\Components\ListLessons;
+use App\Infolists\Components\ListSteps;
+use App\Models\Course;
+use App\Models\Enrollment;
 use Filament\Actions;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -42,8 +45,10 @@ class ViewCourse extends ViewRecord
                     ->schema([
 /*                        CourseProgress::make()
                             ->course($this->getRecord()->course),*/
-                        ListLessons::make('Уроки')
-                            ->course($this->getRecord()),
+/*                        ListLessons::make('Уроки')
+                            ->course($this->getRecord()),*/
+                        ListSteps::make('Шаги')
+                            ->enrollment(Enrollment::where('course_id', $this->getRecord()->id)->where('user_id', auth()->id())->first()),
 /*                        RepeatableEntry::make('lessons')
                             ->schema([
                                 TextEntry::make('name')

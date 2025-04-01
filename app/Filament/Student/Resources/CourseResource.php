@@ -26,7 +26,7 @@ class CourseResource extends Resource
     protected static ?string $model = Course::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
     protected static ?string $modelLabel = 'Курс';
     protected static ?string $pluralModelLabel = 'Мои курсы';
 //    protected static ?string $navigationGroup = 'Академия';
@@ -82,6 +82,7 @@ class CourseResource extends Resource
             'index' => Pages\ListCourses::route('/'),
             'view'  => Pages\ViewCourse::route('/{record}'),
             'lessons.view' => ViewLesson::route('/{parent}/lessons/{record}'),
+            'quizzes.view' => ViewLesson::route('/{parent}/quizzes/{record}'),
 //            'create' => Pages\CreateCourse::route('/create'),
 //            'edit' => Pages\EditCourse::route('/{record}/edit'),
         ];
