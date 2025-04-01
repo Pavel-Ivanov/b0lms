@@ -67,6 +67,7 @@ class ListLessons extends Component
 
     public function getUrl($lesson)
     {
+//        dump($this->course);
         return CourseResource::getUrl('lessons.view', [
             'parent' => $this->course,
             'record' => $lesson,
