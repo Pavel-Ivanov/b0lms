@@ -50,8 +50,7 @@ class ViewLesson extends ViewRecord
                         TextEntry::make('lesson_content')
                             ->hiddenLabel()
                             ->html()
-                            ->size(TextEntrySize::Medium)
-                        ,
+                            ->size(TextEntrySize::Medium),
                         TextEntry::make('media')
                             ->hiddenLabel()
                             ->formatStateUsing(function (Lesson $record)

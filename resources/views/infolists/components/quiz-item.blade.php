@@ -2,7 +2,7 @@
     'py-4 flex gap-x-4',
     'hover:bg-gray-100 hover:text-primary-600' => !$isActive($quiz)
 ])>
-    <a href="#">
+    <a href="{{ $getUrl($quiz) }}">
         <div class="flex items-center gap-x-3">
             <x-filament::icon
                 icon="heroicon-o-question-mark-circle"
