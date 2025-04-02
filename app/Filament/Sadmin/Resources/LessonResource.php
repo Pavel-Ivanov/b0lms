@@ -158,12 +158,12 @@ class LessonResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('course.name')
-                    ->label('Курс')
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Название')
                     ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('course.name')
+                    ->label('Курс')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('position')
                     ->label('Позиция')
