@@ -10,6 +10,8 @@ use App\Infolists\Components\CourseProgress;
 use App\Infolists\Components\LessonPaginator;
 use App\Infolists\Components\ListLessons;
 use App\Infolists\Components\ListQuestions;
+use App\Infolists\Components\ListSteps;
+use App\Models\Enrollment;
 use App\Models\Lesson;
 use Awcodes\Matinee\Matinee;
 use Filament\Infolists\Components\Grid;
@@ -64,9 +66,12 @@ class ViewLesson extends ViewRecord
                     ->schema([
 /*                        CourseProgress::make()
                             ->course($this->getRecord()->course),*/
-                        ListLessons::make('Lessons')
+/*                        ListLessons::make('Lessons')
                             ->course($this->getRecord()->course)
-                            ->activeLesson($this->getRecord()),
+                            ->activeLesson($this->getRecord()),*/
+                        ListSteps::make('Шаги')
+                            ->enrollment(Enrollment::where('course_id', $this->getRecord()->course->id)->where('user_id', auth()->id())->first()),
+
                     ])
                     ->columnSpan(1),
             ])
