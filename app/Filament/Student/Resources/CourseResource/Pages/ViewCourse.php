@@ -49,11 +49,6 @@ class ViewCourse extends ViewRecord
                             ->course($this->getRecord()),*/
                         ListSteps::make('Шаги')
                             ->enrollment(Enrollment::where('course_id', $this->getRecord()->id)->where('user_id', auth()->id())->first()),
-/*                        RepeatableEntry::make('lessons')
-                            ->schema([
-                                TextEntry::make('name')
-                                ->hiddenLabel(),
-                            ])*/
                     ])
                     ->columnSpan(1),
             ])
