@@ -12,8 +12,8 @@
 
             </div>
         </div>
-
-        <div class="shrink-0 px-4 py-6 sm:px-6 lg:w-96 lg:pr-8 xl:pr-6 lg:order-first">
+        <!-- Right sidebar -->
+        <div class="shrink-0 px-4 py-6 sm:px-6 lg:max-w-xs lg:pr-8 xl:pr-6 lg:order-first break-words">
             @livewire('course-navigation', ['enrollment' => $enrollment])
         </div>
     </div>
