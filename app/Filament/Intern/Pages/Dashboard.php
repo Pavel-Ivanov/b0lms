@@ -9,7 +9,6 @@ use Filament\Pages\Dashboard as BaseDashboard;
 class Dashboard extends BaseDashboard
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
 //    protected static string $view = 'filament.intern.pages.dashboard';
 
     public function getColumns(): int | array
@@ -20,10 +19,7 @@ class Dashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-//            parent::getWidgets(),
             AssignedCoursesWidget::class,
         ];
-
-//        return parent::getWidgets();
     }
 }
