@@ -3,7 +3,6 @@
 //    'hover:bg-gray-100 hover:text-primary-600' => !$isActive($lesson)
 ])>
     <a href="{{ $this->getUrl($lesson) }}">
-{{--    <a href="#">--}}
         <div class="flex items-center gap-x-3">
             <x-filament::icon
                 icon="heroicon-o-document-text"
