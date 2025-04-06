@@ -32,13 +32,15 @@ class EnrollmentStep extends Model
         return $this->belongsTo(Enrollment::class);
     }
 
-public function stepableModel(): ?Model
-{
-    try {
-        return $this->stepable_type::findOrFail($this->stepable_id);
-    } catch (\Exception $e) {
-        return null; // Либо бросить исключение
+    public function stepableType(): string
+    {
+        return class_basename($this->stepable_type);
     }
-}
+
+
+    public function stepableModel(): ?Model
+    {
+        return $this->stepable_type::findOrFail($this->stepable_id);
+    }
 
 }
