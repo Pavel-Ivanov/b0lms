@@ -10,15 +10,20 @@ use Illuminate\Database\Eloquent\Model;
 class CourseView extends Page
 {
     protected static string $view = 'filament.intern.pages.course-view';
-    protected static ?string $title = 'Обзор курса';
+    protected static ?string $title = '';
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $slug = 'courses';
 
     public Model | int | string | null $record;
+    public Enrollment $enrollment;
 
     public function mount(int|string $record): void
     {
         $this->record = Course::findOrFail($record);
+        $this->enrollment = Enrollment::where('course_id', $this->record->id)
+            ->where('user_id', auth()->id())
+            ->with('steps')
+            ->firstOrFail();
     }
 
     public static function getRoutePath(): string
