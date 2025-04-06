@@ -29,12 +29,16 @@ class InternPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Gray,
             ])
+            ->topNavigation()
+//            ->navigation(false)
 //            ->discoverResources(in: app_path('Filament/Intern/Resources'), for: 'App\\Filament\\Intern\\Resources')
 //            ->discoverPages(in: app_path('Filament/Intern/Pages'), for: 'App\\Filament\\Intern\\Pages')
             ->pages([
 //                Pages\Dashboard::class,
                 \App\Filament\Intern\Pages\Dashboard::class,
                 \App\Filament\Intern\Pages\CourseView::class,
+                \App\Filament\Intern\Pages\LessonView::class,
+                \App\Filament\Intern\Pages\QuizView::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Intern/Widgets'), for: 'App\\Filament\\Intern\\Widgets')
             ->widgets([
