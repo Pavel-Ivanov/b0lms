@@ -20,6 +20,11 @@ class Question extends Model
         return $this->hasMany(QuestionOption::class);
     }
 
+    public function correctQuestionOption()
+    {
+        return $this->questionOptions()->where('correct', true)->first();
+    }
+
     public function quiz(): BelongsTo
     {
         return $this->belongsTo(Quiz::class);
