@@ -17,7 +17,7 @@ class CourseNavigation extends Component
 {
     public Enrollment $enrollment;
     public Collection $steps;
-    public ?EnrollmentStep $activeStep = null;
+    public ?int $activeStepId = null;
 
     protected static string $view = 'livewire.course-navigation';
 
@@ -26,16 +26,22 @@ class CourseNavigation extends Component
     {
         $this->enrollment = $enrollment;
         $this->steps = $this->enrollment->steps()->orderBy('position')->get();
-//        $this->activeStep = $activeStep;
+//        $this->activeStepId = $activeStep;
     }
 
-    public function setActiveStep(EnrollmentStep $step)
+    public function setActiveStepId(int $stepId)
     {
-        $this->activeStep = $step;
-        $url = $this->getUrl($step);
-        if ($url !== '#') {
-            return redirect()->to($url);
-        }
+        $this->activeStepId = $stepId;
+    }
+
+    public function getActiveStepId()
+    {
+        return $this->activeStepId;
+    }
+
+    public function isStepActive(int $stepId):bool
+    {
+        return $this->activeStepId === $stepId;
     }
 
     public function getUrl(Model $step): string

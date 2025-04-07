@@ -4,15 +4,12 @@
             @php
                 $stepModel = $step->stepableModel();
                 $stepType = $step->stepableType();
+                $isActive = $this->isStepActive($step->id);
             @endphp
             @if($stepType === 'Lesson')
-                @include('filament.intern.pages.lesson-item', [
-                    'lesson' => $stepModel,
-                ])
+                @include('filament.intern.pages.lesson-item')
             @elseif($stepType === 'Quiz')
-                @include('filament.intern.pages.quiz-item', [
-                    'quiz' => $stepModel,
-                ])
+                @include('filament.intern.pages.quiz-item')
             @endif
         @endforeach
     </ul>

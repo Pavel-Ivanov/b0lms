@@ -24,7 +24,6 @@ class LessonView extends Page
             ->where('user_id', auth()->id())
             ->with('steps')
             ->firstOrFail();
-
     }
 
     public static function getRoutePath(): string
