@@ -1,7 +1,9 @@
 <div>
     @if ($quiz)
-        <h2>{{ $quiz->name }}</h2>
-        <p>{{ $quiz->description }}</p>
+{{--        <h2>{{ $quiz->name }}</h2>--}}
+{{--        <p>{{ $quiz->description }}</p>--}}
+
+        <livewire:quiz-form :quiz="$quiz" :enrollment="$enrollment" />
 
         @if ($enrollment)
             @php

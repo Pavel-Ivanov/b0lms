@@ -8,6 +8,7 @@ use App\Models\QuestionOption;
 use App\Models\Quiz;
 use App\Models\Test;
 use App\Models\TestAnswer;
+use Filament\Forms\Components\Wizard\Step;
 use Filament\Pages\Page;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\Radio;
@@ -83,7 +84,7 @@ class QuizView extends Page
 
 //        dump($questions);
         foreach ($questions as $question) {
-            $steps[] = Wizard\Step::make('Вопрос ' . $i)
+            $steps[] = Step::make('Вопрос ' . $i)
                 ->schema([
                     Radio::make($question['id'])
                         ->label($question['question_text'])
