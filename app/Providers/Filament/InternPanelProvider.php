@@ -39,6 +39,8 @@ class InternPanelProvider extends PanelProvider
                 \App\Filament\Intern\Pages\CourseView::class,
                 \App\Filament\Intern\Pages\LessonView::class,
                 \App\Filament\Intern\Pages\QuizView::class,
+
+                \App\Filament\Pages\Intern\EnrollmentView::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Intern/Widgets'), for: 'App\\Filament\\Intern\\Widgets')
             ->widgets([

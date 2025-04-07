@@ -3,6 +3,7 @@
 namespace App\Filament\Intern\Widgets;
 
 use App\Filament\Intern\Pages\CourseView;
+use App\Filament\Pages\Intern\EnrollmentView;
 use App\Models\Enrollment;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -32,7 +33,10 @@ class AssignedCoursesWidget extends BaseWidget
                     ->label('Перейти к курсу')
                     ->icon('heroicon-o-arrow-right')
                     ->url(function (Enrollment $record):string {
-                        return CourseView::getUrl(['record' => $record->course->id]);
+                        return EnrollmentView::getUrl([
+                            'record' => $record->id,
+                            'step' => 0,
+                        ]);
                     }),
             ]);
     }
