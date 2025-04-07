@@ -1,39 +1,34 @@
 <x-filament-panels::page>
-    <div class="flex h-screen overflow-hidden">
-        <div class="w-64 border-r border-gray-200 bg-gray-100">
-            <nav class="py-6">
-                <ul role="list" class="space-y-1">
-                    @foreach ($this->getNavigation() as $item)
-                        <li class="filament-navigation-item">
-                            <a
-                                href="{{ $item['url'] }}"
-                                @class([
-                                    'filament-navigation-item-link flex items-center gap-2 py-2 px-3 rounded-md font-medium transition-colors duration-200 hover:bg-gray-50',
-                                    'bg-primary-50 text-primary-600' => $item['active'],
-                                    'text-gray-600' => !$item['active'],
-                                ])
-                            >
-                                <x-filament::icon icon="{{ $item['icon'] }}" class="h-5 w-5" />
-                                <span>{{ $item['label'] }}</span>
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
-            </nav>
-        </div>
 
-        <div class="flex-1 overflow-y-auto p-6">
-            @if ($activeLesson)
-                @include('filament.pages.intern.lesson-content', ['lesson' => $activeLesson, 'enrollment' => $this->getEnrollment()])
-            @elseif ($activeQuiz)
-                @include('filament.pages.intern.quiz-content', ['quiz' => $activeQuiz, 'enrollment' => $this->getEnrollment()])
-            @else
-                <div>
-                    <h2>Информация о назначении</h2>
-                    <p>Курс: {{ $this->enrollment->course->name }}</p>
-                    <p>Пользователь: {{ $this->enrollment->user->name }}</p>
-                </div>
-            @endif
+    <div class="mx-auto w-full max-w-7xl grow flex flex-col-reverse lg:flex-row xl:px-2">
+        <!-- Left sidebar & main wrapper -->
+        <div class="flex-1 xl:flex">
+            <div class="px-4 py-6 sm:px-6 lg:pl-8 xl:w-64 xl:shrink-0 xl:pl-6">
+                @if ($activeLesson)
+                    @include('filament.pages.intern.lesson-content', ['lesson' => $activeLesson, 'enrollment' => $this->getEnrollment()])
+                @elseif ($activeQuiz)
+                    @include('filament.pages.intern.quiz-content', ['quiz' => $activeQuiz, 'enrollment' => $this->getEnrollment()])
+                @else
+                    <div>
+                        <h2>Информация о назначении</h2>
+                        <p>Курс: {{ $this->enrollment->course->name }}</p>
+                        <p>Пользователь: {{ $this->enrollment->user->name }}</p>
+                    </div>
+                @endif
+            </div>
+
+            <div class="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">
+
+            </div>
+        </div>
+        <!-- Right sidebar -->
+        <div class="shrink-0 px-4 py-6 sm:px-6 lg:max-w-xs lg:pr-8 xl:pr-6 lg:order-first break-words">
+            <ul role="list" class="divide-y divide-gray-200">
+                @foreach($this->getNavigation() as $item)
+                    @include($item['template'])
+                @endforeach
+            </ul>
         </div>
     </div>
+
 </x-filament-panels::page>

@@ -65,21 +65,23 @@ class EnrollmentView extends Page
 
             if ($enrollmentStep->stepable_type === Lesson::class) {
                 $lesson = Lesson::find($enrollmentStep->stepable_id);
-                $label = $lesson->title ?? 'Урок';
-                $icon = 'heroicon-o-document-text';
+                $label = $lesson->name ?? 'Урок';
+                $template = 'filament.pages.intern.lesson-item';
             } elseif ($enrollmentStep->stepable_type === Quiz::class) {
                 $quiz = Quiz::find($enrollmentStep->stepable_id);
-                $label = $quiz->title ?? 'Тест';
-                $icon = 'heroicon-o-question-mark-circle';
+                $label = $quiz->name ?? 'Тест';
+                $template = 'filament.pages.intern.quiz-item';
             } else {
                 $label = 'Шаг ' . $enrollmentStep->position;
-                $icon = 'heroicon-o-collection'; // Дефолтная иконка
+                $template = '';
             }
 
             return [
+                'step' => $enrollmentStep,
+                'stepModel' => $enrollmentStep->stepableModel(),
                 'label' => $label,
                 'url' => $url,
-                'icon' => $icon,
+                'template' => $template,
                 'active' => $this->activeStepId === $enrollmentStep->id,
             ];
         })->toArray();
