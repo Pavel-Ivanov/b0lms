@@ -34,7 +34,7 @@ class InternPanelProvider extends PanelProvider
             ])
             ->topNavigation()
 //            ->navigation(false)
-//            ->discoverResources(in: app_path('Filament/Intern/Resources'), for: 'App\\Filament\\Intern\\Resources')
+            ->discoverResources(in: app_path('Filament/Intern/Resources'), for: 'App\\Filament\\Intern\\Resources')
 //            ->discoverPages(in: app_path('Filament/Intern/Pages'), for: 'App\\Filament\\Intern\\Pages')
             ->pages([
 //                Pages\Dashboard::class,

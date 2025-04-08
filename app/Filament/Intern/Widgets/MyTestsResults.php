@@ -22,22 +22,32 @@ class MyTestsResults extends BaseWidget
                     ->collapsible(),
             ])
 
-        ->query(
-                Test::query()
-                    ->where('user_id', auth()->id())
-            )
-            ->columns([
-/*                Tables\Columns\TextColumn::make('quiz.name')
-                    ->label('Тест'),*/
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Дата'),
-                Tables\Columns\TextColumn::make('questions_count')
-                    ->label('Результат')
-                    ->counts('questions')
-                    ->formatStateUsing(function (Test $record) {
-                        return  $record->result. '/' . $record->questions_count. ' (время: ' . (int)($record->time_spent / 60) . ':' . gmdate('s', $record->time_spent) .' минут)';
+            ->query(
+                    Test::query()
+                        ->where('user_id', auth()->id())
+                )
+                ->columns([
+    /*                Tables\Columns\TextColumn::make('quiz.name')
+                        ->label('Тест'),*/
+                    Tables\Columns\TextColumn::make('created_at')
+                        ->label('Дата'),
+                    Tables\Columns\TextColumn::make('questions_count')
+                        ->label('Результат')
+                        ->counts('questions')
+                        ->formatStateUsing(function (Test $record) {
+                            return  $record->result. '/' . $record->questions_count. ' (время: ' . (int)($record->time_spent / 60) . ':' . gmdate('s', $record->time_spent) .' минут)';
+                        }),
+                ])
+/*            ->actions([
+                ViewAction::make('viewDetails')
+                    ->label('Подробнее')
+                    ->modalHeading('Подробная информация')
+                    ->modalWidth('xl')
+                    ->infolist(function (\Filament\Tables\Contracts\HasTable $livewire, \App\Models\Test $record): Infolist {
+                        return TestResource::infolist(Infolist::make()) // Вызываем статический метод infolist()
+                        ->record($record);
                     }),
-            ])
+                ])*/
             ->paginated(10);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Intern\Widgets;
 
-use App\Filament\Intern\Pages\CourseView;
+//use App\Filament\Intern\Pages\CourseView;
 use App\Filament\Pages\Intern\EnrollmentView;
 use App\Models\Enrollment;
 use Filament\Tables;
