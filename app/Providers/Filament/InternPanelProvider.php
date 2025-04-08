@@ -26,6 +26,7 @@ class InternPanelProvider extends PanelProvider
         return $panel
             ->id('intern')
             ->path('intern')
+            ->login()
             ->colors([
                 'primary' => Color::Gray,
             ])
