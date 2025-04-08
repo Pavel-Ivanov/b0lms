@@ -12,19 +12,21 @@ use Filament\Widgets\TableWidget as BaseWidget;
 class AssignedCoursesWidget extends BaseWidget
 {
     use Tables\Concerns\InteractsWithTable;
-    protected static ?string $heading = 'Назначенные курсы';
+//    protected static ?string $heading = 'Назначенные курсы';
     protected int | string | array $columnSpan = 'full';
 
     public function table(Table $table): Table
     {
         return $table
+            ->heading('Мои курсы')
             ->query(
                 Enrollment::query()
                     ->where('user_id', auth()->user()->id)
                     ->with('course')
             )
             ->columns([
-                Tables\Columns\TextColumn::make('course.name'),
+                Tables\Columns\TextColumn::make('course.name')
+                    ->label('Курс'),
                 Tables\Columns\TextColumn::make('enrollment_date')
                     ->label('Дата назначения')
             ])
