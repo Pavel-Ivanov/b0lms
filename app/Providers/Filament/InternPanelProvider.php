@@ -27,6 +27,8 @@ class InternPanelProvider extends PanelProvider
             ->id('intern')
             ->path('intern')
             ->login()
+            ->brandLogo('/images/logo-stovesta-small.png')
+//            ->brandName('Академия StoVesta')
             ->colors([
                 'primary' => Color::Gray,
             ])
