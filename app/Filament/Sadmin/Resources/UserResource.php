@@ -36,20 +36,25 @@ class UserResource extends Resource
                         Tabs\Tab::make('Информация')
                             ->schema([
                                 Forms\Components\TextInput::make('name')
+                                    ->label('ФИО')
                                     ->required()
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('email')
+                                    ->label('Email')
                                     ->email()
                                     ->required()
                                     ->maxLength(255),
                                 Forms\Components\Select::make('company_department_id')
+                                    ->label('Подразделение')
                                     ->relationship('companyDepartment', 'name')
                                     ->required(),
                                 Forms\Components\Select::make('company_position_id')
+                                    ->label('Должность')
                                     ->relationship('companyPosition', 'name')
                                     ->required(),
 //                Forms\Components\DateTimePicker::make('email_verified_at'),
                                 Forms\Components\TextInput::make('password')
+                                    ->label('Пароль')
                                     ->password()
                                     ->required()
                                     ->maxLength(255),
