@@ -10,15 +10,18 @@ use App\Models\Quiz;
 use DB;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use function Pest\Laravel\delete;
 
 class EnrollmentResource extends Resource
 {
@@ -38,26 +41,50 @@ class EnrollmentResource extends Resource
             ->schema([
                 Tabs::make('Tabs')
                     ->tabs([
-                        Tabs\Tab::make('Основные данные')
+                        Tabs\Tab::make('Основная информация')
                             ->schema([
-                                Forms\Components\Select::make('course_id')
-                                    ->label('Курс')
-                                    ->relationship('course', 'name')
-                                    ->required(),
-                                Forms\Components\Select::make('user_id')
-                                    ->label('Студент')
-                                    ->relationship('user', 'name')
-                                    ->required(),
-                                Forms\Components\DateTimePicker::make('enrollment_date')
-                                    ->label('Дата начала обучения')
-                                    ->required(),
-                                Forms\Components\DatePicker::make('completion_deadline')
-                                    ->label('Дата окончания обучения')
-                                    ->date(),
+                                Section::make('Основная информация')
+                                    ->label('')
+                                    ->schema([
+                                        Forms\Components\Select::make('course_id')
+                                            ->label('Курс')
+                                            ->relationship('course', 'name')
+                                            ->required(),
+                                        Forms\Components\Select::make('user_id')
+                                            ->label('Студент')
+                                            ->relationship('user', 'name')
+                                            ->required(),
+                                        Forms\Components\DateTimePicker::make('enrollment_date')
+                                            ->label('Дата начала обучения')
+                                            ->date()
+                                            ->required()
+                                            ->default(now()),
+                                        Forms\Components\DatePicker::make('completion_deadline')
+                                            ->label('Дата окончания обучения')
+                                            ->date()
+                                            ->default(now()->addMonth()),
+                                    ])
+                                    ->footerActions([
+                                        Action::make('set_steps')
+                                            ->label('Создать план обучения')
+                                            ->icon('heroicon-o-clipboard-document-list')
+                                            ->color('success')
+                                            ->requiresConfirmation()
+                                            ->action(function (?Enrollment $record) {
+                                                if ($record) {
+                                                    static::setSteps($record);
+                                                }
+                                            })
+                                            ->hidden(function (?Enrollment $record) {
+                                                return !$record || $record->hasSteps();
+                                            })
+                                        ,
+                                    ])
+                                ->columns(2),
                             ]),
                         Tabs\Tab::make('План обучения')
                             ->schema([
-/*                                Forms\Components\Repeater::make('steps')
+                                Forms\Components\Repeater::make('steps')
                                     ->hiddenLabel()
                                     ->relationship('steps')
                                     ->schema([
@@ -89,26 +116,17 @@ class EnrollmentResource extends Resource
                                         };
 
                                     })
+                                    ->deletable(false)
                                     ->columns()
-                                    ->collapsible()
-                                    ->collapsed()
+//                                    ->collapsible()
+//                                    ->collapsed()
                                     ->addable(false)
 //                                    ->addActionLabel('Добавить тест')
-                                    ->defaultItems(0),*/
-                                Forms\Components\Actions::make([
-                                    Action::make('set_steps')
-                                        ->label('Создать план обучения')
-                                        ->icon('heroicon-o-clipboard-document-list')
-                                        ->color('success')
-                                        ->requiresConfirmation()
-                                        ->action(function (Enrollment $record) {
-                                            static::setSteps($record);
-                                        })
-                                        ->hidden(function (Enrollment $record) {
-                                            return $record->hasSteps();
-                                        }),
-                                ]),
-                            ]),
+//                                    ->defaultItems(0),
+                            ])
+                        ->visible(function (?Enrollment $record): bool {
+                            return $record && $record->hasSteps();
+                        }),
                     ])
                     ->persistTab()
                     ->columnSpan('full')
@@ -156,16 +174,20 @@ class EnrollmentResource extends Resource
                     ->relationship('user', 'name')
                     ->searchable()
                     ->preload(),
-
+                Filter::make('is_not_steps_created')
+                    ->label('Нет плана обучения')
+                    ->query(fn (Builder $query): Builder => $query->where('is_steps_created', false))
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->hiddenLabel(),
             ])
-            ->bulkActions([
+/*            ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])*/
+            ->persistFiltersInSession();
     }
 
     public static function getRelations(): array
