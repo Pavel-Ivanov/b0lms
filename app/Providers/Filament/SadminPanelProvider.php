@@ -33,7 +33,13 @@ class SadminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Gray,
             ])
-            ->discoverResources(in: app_path('Filament/Sadmin/Resources'), for: 'App\\Filament\\Sadmin\\Resources')
+            ->navigationGroups([
+                'Академия',
+                'Компания',
+                'Справочники',
+                'Администрирование',
+            ])
+        ->discoverResources(in: app_path('Filament/Sadmin/Resources'), for: 'App\\Filament\\Sadmin\\Resources')
             ->discoverPages(in: app_path('Filament/Sadmin/Pages'), for: 'App\\Filament\\Sadmin\\Pages')
             ->pages([
                 Pages\Dashboard::class,
