@@ -44,6 +44,11 @@ class UserResource extends Resource
                                     ->email()
                                     ->required()
                                     ->maxLength(255),
+                                Forms\Components\Select::make('roles')
+                                    ->preload()
+                                    ->multiple()
+                                    ->relationship('roles', 'name')
+                                    ->columnSpan('full'),
                                 Forms\Components\Select::make('company_department_id')
                                     ->label('Подразделение')
                                     ->relationship('companyDepartment', 'name')
@@ -52,7 +57,6 @@ class UserResource extends Resource
                                     ->label('Должность')
                                     ->relationship('companyPosition', 'name')
                                     ->required(),
-//                Forms\Components\DateTimePicker::make('email_verified_at'),
                                 Forms\Components\TextInput::make('password')
                                     ->label('Пароль')
                                     ->password()
@@ -81,7 +85,6 @@ class UserResource extends Resource
                                             ->date(),
                                     ])
                                     ->itemLabel(function (array $state): ?string {
-                                        //dump($state);
                                         if (empty($state['course_id'])) {
                                             return '';
                                         }
@@ -90,14 +93,8 @@ class UserResource extends Resource
                                     ->columns()
                                     ->collapsible()
                                     ->collapsed()
-//                                    ->addActionLabel('Добавить назначение')
                                     ->defaultItems(0),
-
                             ]),
-/*                        Tabs\Tab::make('Tab 3')
-                            ->schema([
-                                // ...
-                            ]),*/
                     ])
                     ->persistTab()
                     ->columnSpan('full')
@@ -115,6 +112,8 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->label('Роли'),
                 Tables\Columns\TextColumn::make('companyDepartment.name')
                     ->label('Подразделение')
                     ->numeric()
@@ -144,9 +143,6 @@ class UserResource extends Resource
                 ->hiddenLabel(),
             ])
             ->bulkActions([
-/*                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),*/
             ]);
     }
 
