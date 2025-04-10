@@ -30,6 +30,7 @@ class SadminPanelProvider extends PanelProvider
             ->id('sadmin')
             ->path('sadmin')
             ->login()
+            ->brandLogo('/images/logo-stovesta-small.png')
             ->colors([
                 'primary' => Color::Gray,
             ])
