@@ -87,6 +87,7 @@ class CourseResource extends Resource
                                         Group::make()
                                             ->schema([
                                                 SpatieMediaLibraryFileUpload::make('Course Image')
+                                                    ->label('Изображение курса')
                                                     ->collection('course_images')
 //                                                    ->disk('public')
 //                                                    ->directory('course_images')
@@ -107,10 +108,12 @@ class CourseResource extends Resource
                                             ->required()
                                             ->maxLength(255),
                                         Forms\Components\TextInput::make('position')
+                                            ->label('Позиция')
                                             ->required()
                                             ->numeric()
                                             ->default(0),
                                         Forms\Components\Toggle::make('is_published')
+                                            ->label('Опубликован')
                                             ->required(),
                                         Forms\Components\Hidden::make('course_id')
                                             ->default(fn (): ?int => $form->model['id'] ?? null)
