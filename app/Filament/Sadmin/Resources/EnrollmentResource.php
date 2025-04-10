@@ -5,6 +5,7 @@ namespace App\Filament\Sadmin\Resources;
 use App\Filament\Sadmin\Resources\EnrollmentResource\Pages;
 use App\Filament\Sadmin\Resources\EnrollmentResource\RelationManagers;
 use App\Models\Enrollment;
+use App\Models\EnrollmentStep;
 use App\Models\Lesson;
 use App\Models\Quiz;
 use DB;
@@ -13,6 +14,11 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Tabs\Tab;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -49,10 +55,12 @@ class EnrollmentResource extends Resource
                                         Forms\Components\Select::make('course_id')
                                             ->label('Курс')
                                             ->relationship('course', 'name')
+                                            ->preload()
                                             ->required(),
                                         Forms\Components\Select::make('user_id')
                                             ->label('Студент')
                                             ->relationship('user', 'name')
+                                            ->preload()
                                             ->required(),
                                         Forms\Components\DateTimePicker::make('enrollment_date')
                                             ->label('Дата начала обучения')
@@ -77,8 +85,7 @@ class EnrollmentResource extends Resource
                                             })
                                             ->hidden(function (?Enrollment $record) {
                                                 return !$record || $record->hasSteps();
-                                            })
-                                        ,
+                                            }),
                                     ])
                                 ->columns(2),
                             ]),
@@ -88,44 +95,25 @@ class EnrollmentResource extends Resource
                                     ->hiddenLabel()
                                     ->relationship('steps')
                                     ->schema([
-                                        Forms\Components\Hidden::make('enrollment_id'),
-                                        Forms\Components\Hidden::make('course_id'),
-                                        Forms\Components\Hidden::make('user_id'),
-                                        Forms\Components\Hidden::make('stepable_id'),
-                                        Forms\Components\Hidden::make('stepable_type'),
-                                        Forms\Components\Hidden::make('position'),
-                                        Forms\Components\Hidden::make('is_completed'),
+                                        //
                                     ])
-                                    ->afterStateHydrated(function (Forms\Components\Repeater $component, $state) {
-                                        if (empty($state)) {
-                                            $enrollment = Enrollment::find(request()->route('record'));
-                                            if ($enrollment) {
-                                                $steps = $enrollment->steps()->orderBy('position')->get();
-                                                $component->state($steps->toArray());
-                                            }
-                                        }
-                                    })
                                         ->itemLabel(function (array $state): ?string {
                                         if (empty($state['stepable_type'])) {
                                             return '';
                                         }
                                         return match ($state['stepable_type']) {
                                             Lesson::class => 'Урок - ' . Lesson::findOrFail($state['stepable_id'])->name,
-                                            Quiz::class => 'Тест',
+                                            Quiz::class => 'Тест - ' . Quiz::findOrFail($state['stepable_id'])->name,
                                             default => '',
                                         };
 
                                     })
                                     ->deletable(false)
                                     ->columns()
-//                                    ->collapsible()
-//                                    ->collapsed()
                                     ->addable(false)
-//                                    ->addActionLabel('Добавить тест')
-//                                    ->defaultItems(0),
                             ])
                         ->visible(function (?Enrollment $record): bool {
-                            return $record && $record->hasSteps();
+                            return $record !== null && $record->hasSteps();
                         }),
                     ])
                     ->persistTab()
@@ -140,6 +128,7 @@ class EnrollmentResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('course.name')
                     ->label('Курс')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Студент')
@@ -178,6 +167,12 @@ class EnrollmentResource extends Resource
                     ->label('Нет плана обучения')
                     ->query(fn (Builder $query): Builder => $query->where('is_steps_created', false))
             ])
+            ->recordUrl(function ($record) {
+/*                if ($record->trashed()) {
+                    return null;
+                }*/
+                return Pages\ViewEnrollment::getUrl([$record->id]);
+            })
             ->actions([
                 Tables\Actions\EditAction::make()
                 ->hiddenLabel(),
@@ -188,6 +183,91 @@ class EnrollmentResource extends Resource
                 ]),
             ])*/
             ->persistFiltersInSession();
+    }
+
+    public static function infoList(Infolist $infolist): Infolist
+    {
+        return $infolist
+
+            ->schema([
+                \Filament\Infolists\Components\Tabs::make('Tabs')
+                    ->tabs([
+                        \Filament\Infolists\Components\Tabs\Tab::make('Основная информация')
+                            ->schema([
+                                TextEntry::make('course.name')
+                                    ->label('Курс')
+                                    ->inlineLabel(),
+                                TextEntry::make('user.name')
+                                    ->label('Студент')
+                                    ->inlineLabel(),
+                                TextEntry::make('enrollment_date')
+                                    ->label('Дата назначения')
+                                    ->inlineLabel(),
+                                TextEntry::make('completion_deadline')
+                                    ->label('Дата окончания обучения')
+                                    ->inlineLabel(),
+
+                            ]),
+                        \Filament\Infolists\Components\Tabs\Tab::make('План обучения')
+                            ->schema([
+                                RepeatableEntry::make('steps')
+                                    ->hiddenLabel()
+                                    ->schema([
+                                        \Filament\Infolists\Components\Section::make('step')
+                                            ->heading(function (EnrollmentStep $record) {
+                                                return $record->stepableModel()->name;
+                                            })
+//                                            ->description('')
+                                            ->schema([
+                                                TextEntry::make('is_completed')
+                                                    ->label('Статус:')
+                                                    ->inlineLabel()
+//                                                    ->hiddenLabel()
+                                                    ->formatStateUsing(function ($state) {
+                                                        return $state === true ? 'Завершен' : 'Не завершен';
+                                                    }),
+                                                TextEntry::make('started_at')
+                                                    ->label('Начат:')
+                                                    ->inlineLabel(),
+                                                TextEntry::make('completed_at')
+                                                    ->label('Завершен:')
+                                                    ->inlineLabel(),
+
+                                            ]),
+/*                                        Grid::make()
+                                            ->schema([
+                                                TextEntry::make('stepable_type')
+                                                    ->hiddenLabel()
+                                                    ->formatStateUsing(function ($state, $record) {
+//                                                        dump($state, $record);
+                                                        return $record->stepableModel()->name;
+                                                    }),
+                                            ])
+                                            ->columns(2),
+
+                                        TextEntry::make('stepable_type')
+                                            ->label('Тип шага'),
+                                        TextEntry::make('stepable_id')
+                                            ->label('ID шага'),
+                                        TextEntry::make('stepable_name')
+                                            ->label('Название шага'),*/
+                                    ])
+                                    ->contained(false),
+
+                            ]),
+                    ])
+                    ->persistTab()
+                    ->columnSpan('full')
+                    ->activeTab(1),
+
+/*                \Filament\Infolists\Components\Section::make('Основная информация')
+                    ->schema([
+                    ]),
+            \Filament\Infolists\Components\Section::make('План обучения')
+                ->schema([
+                ])
+            ->columns(),*/
+            ]);
     }
 
     public static function getRelations(): array
@@ -203,6 +283,7 @@ class EnrollmentResource extends Resource
             'index' => Pages\ListEnrollments::route('/'),
             'create' => Pages\CreateEnrollment::route('/create'),
             'edit' => Pages\EditEnrollment::route('/{record}/edit'),
+            'view' => Pages\ViewEnrollment::route('/{record}'),
         ];
     }
 
@@ -223,7 +304,6 @@ class EnrollmentResource extends Resource
         }
 
         $stepsData = $course->getSteps();
-//        dump($stepsData);
         $steps = [];
         foreach ($stepsData as $index => $step) {
             $steps[] = [
@@ -236,7 +316,6 @@ class EnrollmentResource extends Resource
                 'is_completed' => false,
             ];
         }
-//        dump($steps);
 
         $insertedCount = DB::table('enrollment_steps')->insertOrIgnore($steps);
 

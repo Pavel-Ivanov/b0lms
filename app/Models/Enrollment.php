@@ -43,7 +43,7 @@ class Enrollment extends Model
 
     public function hasSteps(): bool
     {
-        return $this->is_steps_created;
+        return (bool) $this->is_steps_created;
     }
 
 
