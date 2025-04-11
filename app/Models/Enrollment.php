@@ -36,9 +36,14 @@ class Enrollment extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function steps()
+    public function steps(): HasMany
     {
         return $this->hasMany(EnrollmentStep::class);
+    }
+
+    public function completedSteps()
+    {
+        return $this->steps()->where('is_completed', true);
     }
 
     public function hasSteps(): bool
@@ -46,11 +51,21 @@ class Enrollment extends Model
         return (bool) $this->is_steps_created;
     }
 
-
     public function enrollmentInfo(): string
     {
         return $this->user->name . ' / ' . Carbon::parse($this->enrollment_date)->format("d.m.Y") . ' - ' . Carbon::parse($this->completion_deadline)->format("d.m.Y")  ;
     }
 
+    public function progress(): array
+    {
+        $stepsCount   = $this->steps->count();
+        $completedCount = $this->completedSteps()->count();
+
+        return [
+            'value'      => $completedCount,
+            'max'        => $stepsCount,
+            'percentage' => (int) floor(($completedCount / max(1, $stepsCount)) * 100),
+        ];
+    }
 
 }

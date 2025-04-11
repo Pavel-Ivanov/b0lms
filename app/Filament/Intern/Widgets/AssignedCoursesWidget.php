@@ -8,6 +8,7 @@ use App\Models\Enrollment;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Eloquent\Model;
 
 class AssignedCoursesWidget extends BaseWidget
 {
@@ -29,6 +30,20 @@ class AssignedCoursesWidget extends BaseWidget
                     ->label('Курс'),
                 Tables\Columns\TextColumn::make('enrollment_date')
                     ->label('Дата назначения')
+                    ->dateTime('d-m-Y H:i'),
+                Tables\Columns\TextColumn::make('completion_deadline')
+                    ->label('Дата окончания')
+                    ->date('d-m-Y'),
+/*                Tables\Columns\TextColumn::make('steps_count')
+                    ->label('Кол-во шагов')
+                    ->counts('steps'),*/
+                Tables\Columns\TextColumn::make('user_id')
+                    ->label('Выполнено')
+                    ->formatStateUsing(function (Enrollment $record):string {
+                        $progress = $record->progress();
+//                        dump($record->progress());
+                        return $progress['value'] . ' из ' . $progress['max'] . ' / ' . $progress['percentage'] . '%';
+                    }),
             ])
             ->actions([
                 Tables\Actions\Action::make('view')
