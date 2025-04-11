@@ -65,7 +65,7 @@ return [
 
     'resource_permission_prefixes_labels' => [
         'view' => 'Просмотр',
-        'view_any' => 'Может смотреть любое',
+        'view_any' => 'Видимость',
         'create' => 'Создание',
         'update' => 'Обновление',
         'delete' => 'Удаление',
