@@ -1,25 +1,17 @@
 <div>
     @if ($quiz)
-{{--        <h2>{{ $quiz->name }}</h2>--}}
-{{--        <p>{{ $quiz->description }}</p>--}}
+        <div class="">
+            <h1 class="text-xl font-semibold text-gray-900">
+                {{ $quiz->name }}
+            </h1>
+        </div>
 
-        <livewire:quiz-form :quiz="$quiz" :enrollment="$enrollment" />
+        <div class="mt-2 mx-auto max-w-7xl border-b pb-4">
+            <livewire:quiz-form :quiz="$quiz" :enrollment="$enrollment" />
+        </div>
 
-        @if ($enrollment)
-            @php
-                $enrollmentStep = $enrollment->steps()
-                    ->where('stepable_id', $quiz->id)
-                    ->where('stepable_type', \App\Models\Quiz::class)
-                    ->first();
-            @endphp
-            @if ($enrollmentStep)
-                <p>Статус шага: {{ $enrollmentStep->is_completed ? 'Завершено' : 'Не завершено' }}</p>
-                <p>Позиция шага: {{ $enrollmentStep->position }}</p>
-                {{-- Здесь вы можете добавить дополнительную информацию о прохождении теста (например, результаты) --}}
-
-            @endif
-        @endif
-    @else
-        <p>Тест не найден.</p>
+        <div class="mt-2 mx-auto max-w-7xl">
+            <p>Статус: {{ $quiz->is_completed ? 'Завершено' : 'Не завершено' }}</p>
+        </div>
     @endif
 </div>

@@ -8,13 +8,13 @@
                 {{ $lesson->announcement }}
             </p>
         </div>
+
         <div class="mt-2 mx-auto max-w-7xl border-b pb-4">
             {!! $lesson->lesson_content !!}
         </div>
 
         <div class="mt-2 mx-auto max-w-7xl">
             <p>Статус: {{ $lesson->is_completed ? 'Завершено' : 'Не завершено' }}</p>
-            <p>Позиция: {{ $lesson->position }}</p>
         </div>
     @endif
 </div>
