@@ -44,10 +44,10 @@ class UserResource extends Resource
                                     ->email()
                                     ->required()
                                     ->maxLength(255),
-                                Forms\Components\Select::make('roles')
-                                    ->preload()
-                                    ->multiple()
+                                Forms\Components\CheckboxList::make('roles')
+                                    ->label('Роли')
                                     ->relationship('roles', 'name')
+                                    ->columns(5)
                                     ->columnSpan('full'),
                                 Forms\Components\Select::make('company_department_id')
                                     ->label('Подразделение')
