@@ -25,14 +25,19 @@ class EnrollmentView extends Page
     public ?Lesson $activeLesson = null;
     public ?Quiz $activeQuiz = null;
 
-//    public function mount(int|string $record, ?int $enrollmentStepId = null): void
+//    protected static ?string $title = '';
+
     public function mount(int|string $record, ?int $step = null): void
     {
         $this->record = Enrollment::findOrFail($record);
         $this->steps = $this->record->steps;
         $this->activeStepId = $step;
         $this->loadStepContent($step);
-//        dump($this->steps);
+    }
+
+    public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        return $this->record->course->name;
     }
 
     public function loadStepContent(?int $stepId): void
@@ -96,7 +101,6 @@ class EnrollmentView extends Page
     {
         return []; // Скрываем из основной навигации Filament
     }
-
 
     public static function getRoutePath(): string
     {

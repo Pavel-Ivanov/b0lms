@@ -1,23 +1,20 @@
 <div>
     @if ($lesson)
-        <h1>{{ $lesson->name }}</h1>
-        <p>{!! $lesson->lesson_content !!}</p>
+        <div class="border-b border-gray-200 pb-4">
+            <h1 class="text-xl font-semibold text-gray-900">
+                {{ $lesson->name }}
+            </h1>
+            <p class="mt-2 max-w-4xl text-base text-gray-500">
+                {{ $lesson->announcement }}
+            </p>
+        </div>
+        <div class="mt-2 mx-auto max-w-7xl border-b pb-4">
+            {!! $lesson->lesson_content !!}
+        </div>
 
-        @if ($enrollment)
-            @php
-                $enrollmentStep = $enrollment->steps()
-                    ->where('stepable_id', $lesson->id)
-                    ->where('stepable_type', \App\Models\Lesson::class)
-                    ->first();
-            @endphp
-            @if ($enrollmentStep)
-                <p>Статус шага: {{ $enrollmentStep->is_completed ? 'Завершено' : 'Не завершено' }}</p>
-                <p>Позиция шага: {{ $enrollmentStep->position }}</p>
-{{-- Здесь вы можете добавить дополнительную информацию о прохождении урока --}}
-
-            @endif
-        @endif
-    @else
-        <p>Урок не найден.</p>
+        <div class="mt-2 mx-auto max-w-7xl">
+            <p>Статус: {{ $lesson->is_completed ? 'Завершено' : 'Не завершено' }}</p>
+            <p>Позиция: {{ $lesson->position }}</p>
+        </div>
     @endif
 </div>
