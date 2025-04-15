@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -100,7 +101,22 @@ class EnrollmentStepResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('course')
+                    ->label('Курс')
+                    ->relationship('course', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('user')
+                    ->label('Студент')
+                    ->relationship('user', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('stepable_type')
+                    ->label('Тип этапа')
+                    ->options([
+                        'App\Models\Lesson' => 'Урок',
+                        'App\Models\Quiz' => 'Тест',
+                    ])
             ])
             ->recordUrl(function ($record) {
                 return Pages\ViewEnrollmentStep::getUrl([$record->id]);
