@@ -32,6 +32,18 @@ class EnrollmentStep extends Model
         return $this->belongsTo(Enrollment::class);
     }
 
+
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+
     public function stepableType(): string
     {
         return class_basename($this->stepable_type);
