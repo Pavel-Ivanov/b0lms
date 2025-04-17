@@ -13,6 +13,10 @@
             {!! $lesson->lesson_content !!}
         </div>
 
+        <div class="mt-2 mx-auto max-w-7xl border-b pb-4">
+            @include('filament.pages.intern.lesson-video', ['data' => $lesson->media])
+        </div>
+
         <div class="mt-2 mx-auto max-w-7xl">
             <p>Статус: {{ $lesson->is_completed ? 'Завершено' : 'Не завершено' }}</p>
         </div>
