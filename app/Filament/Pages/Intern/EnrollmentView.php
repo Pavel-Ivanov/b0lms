@@ -65,8 +65,8 @@ class EnrollmentView extends Page
     {
         return $this->steps->map(function (EnrollmentStep $enrollmentStep) {
             $url = route('filament.intern.pages.enrollments', ['record' => $this->record, 'step' => $enrollmentStep->id]);
-            $label = '';
-            $icon = '';
+//            $label = '';
+//            $icon = '';
 
             if ($enrollmentStep->stepable_type === Lesson::class) {
                 $lesson = Lesson::find($enrollmentStep->stepable_id);
@@ -88,6 +88,7 @@ class EnrollmentView extends Page
                 'url' => $url,
                 'template' => $template,
                 'active' => $this->activeStepId === $enrollmentStep->id,
+                'completed' => $enrollmentStep->isCompleted(),
             ];
         })->toArray();
     }
@@ -96,6 +97,21 @@ class EnrollmentView extends Page
     {
         return $this->record;
     }
+
+    public function getProgress()
+    {
+        $totalSteps = $this->record->steps()->count();
+        $completedSteps = $this->record->steps()
+            ->where('is_completed', true)
+            ->count();
+
+        return [
+            'percent' => $totalSteps > 0 ? round(($completedSteps / $totalSteps) * 100) : 0,
+            'completed' => $completedSteps,
+            'total' => $totalSteps
+        ];
+    }
+
 
     public static function getNavigationItems(): array
     {

@@ -27,8 +27,8 @@
                 icon="heroicon-o-check-circle"
                 @class([
                    'w-7 h-7',
-                    'text-danger-600' => $item['step']->is_completed,
-                    'text-gray-400' =>!$item['step']->is_completed,
+                    'text-danger-600' => $item['completed'],
+                    'text-gray-400' =>!$item['completed'],
                 ])
 {{--                style="min-width:28px;"--}}
             />

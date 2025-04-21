@@ -23,6 +23,7 @@
         </div>
         <!-- Right sidebar -->
         <div class="shrink-0 px-4 py-6 sm:px-6 lg:max-w-xs lg:pr-8 xl:pr-6 lg:order-first break-words">
+            @include('filament.pages.intern.enrollment-progress')
             <ul role="list" class="divide-y divide-gray-200">
                 @foreach($this->getNavigation() as $item)
                     @include($item['template'])
