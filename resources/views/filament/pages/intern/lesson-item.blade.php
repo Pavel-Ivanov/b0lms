@@ -22,13 +22,17 @@
                     {{ $item['stepModel']->announcement }}
                 </p>
             </div>
-            {{-- Uncomment if needed
+{{--            @dump($item['step']->is_completed)--}}
             <x-filament::icon
                 icon="heroicon-o-check-circle"
-                class="w-7 h-7 text-green-600"
-                style="min-width:28px;"
+                @class([
+                   'w-7 h-7',
+                    'text-danger-600' => $item['step']->is_completed,
+                    'text-gray-400' =>!$item['step']->is_completed,
+                ])
+{{--                style="min-width:28px;"--}}
             />
-            --}}
+
         </div>
     </a>
 </li>

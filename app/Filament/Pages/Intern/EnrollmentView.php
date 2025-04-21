@@ -106,4 +106,19 @@ class EnrollmentView extends Page
     {
         return '/' . static::getSlug() . '/{record}/step/{step}';
     }
+
+    public function markLessonAsCompleted()
+    {
+        $activeStep = EnrollmentStep::findOrFail($this->activeStepId);
+        $activeStep->update(['is_completed' => true]);
+
+        $this->dispatch('enrollment-step-completed');
+        $this->refresh();
+    }
+
+    public function refresh()
+    {
+        $this->steps = $this->record->steps()->get();
+        $this->loadStepContent($this->activeStepId);
+    }
 }

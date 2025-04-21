@@ -1,5 +1,14 @@
 <div>
     @if ($lesson)
+
+        <div class="flex justify-end">
+            <x-filament::button type="button"
+                                wire:click="markLessonAsCompleted"
+                                :disabled="$enrollment?->steps->firstWhere('id', $activeStepId)?->is_completed">
+                Отметить как завершенный
+            </x-filament::button>
+        </div>
+
         <div class="border-b border-gray-200 pb-4">
             <h1 class="text-xl font-semibold text-gray-900">
                 {{ $lesson->name }}

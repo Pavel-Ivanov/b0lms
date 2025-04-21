@@ -32,7 +32,6 @@ class EnrollmentStep extends Model
         return $this->belongsTo(Enrollment::class);
     }
 
-
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
@@ -43,16 +42,40 @@ class EnrollmentStep extends Model
         return $this->belongsTo(User::class);
     }
 
-
     public function stepableType(): string
     {
         return class_basename($this->stepable_type);
     }
-
 
     public function stepableModel(): ?Model
     {
         return $this->stepable_type::findOrFail($this->stepable_id);
     }
 
+    public function isCompleted(): bool
+    {
+        return $this->is_completed;
+    }
+
+    public function markAsCompleted(): self
+    {
+        if ($this->is_completed) {
+            return $this;
+        }
+
+        $this->is_completed = true;
+
+        return $this;
+    }
+
+    public function markAsUnCompleted(): self
+    {
+        if (!$this->is_completed) {
+            return $this;
+        }
+
+        $this->is_completed = false;
+
+        return $this;
+    }
 }
