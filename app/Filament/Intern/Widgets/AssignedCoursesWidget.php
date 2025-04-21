@@ -8,6 +8,7 @@ use App\Models\Enrollment;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use IbrahimBougaoua\FilaProgress\Tables\Columns\ProgressBar;
 use Illuminate\Database\Eloquent\Model;
 
 class AssignedCoursesWidget extends BaseWidget
@@ -37,13 +38,26 @@ class AssignedCoursesWidget extends BaseWidget
 /*                Tables\Columns\TextColumn::make('steps_count')
                     ->label('Кол-во шагов')
                     ->counts('steps'),*/
-                Tables\Columns\TextColumn::make('user_id')
+                ProgressBar::make('bar')
+                    ->label('Выполнено')
+                    ->getStateUsing(function (Enrollment $record) {
+                        $progress = $record->progress();
+                        $total = $progress['max'];
+                        $progress = $progress['value'];
+                        return [
+                            'total' => $total,
+                            'progress' => $progress,
+                        ];
+                    })
+//                    ->hideProgressValue()
+                ,
+/*                Tables\Columns\TextColumn::make('user_id')
                     ->label('Выполнено')
                     ->formatStateUsing(function (Enrollment $record):string {
                         $progress = $record->progress();
 //                        dump($record->progress());
                         return $progress['value'] . ' из ' . $progress['max'] . ' / ' . $progress['percentage'] . '%';
-                    }),
+                    }),*/
             ])
             ->actions([
                 Tables\Actions\Action::make('view')
