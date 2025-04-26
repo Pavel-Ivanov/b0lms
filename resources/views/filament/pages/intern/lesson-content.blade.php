@@ -1,10 +1,9 @@
 <div>
     @if ($lesson)
-
         <div class="flex justify-end">
             <x-filament::button type="button"
-                                wire:click="markLessonAsCompleted"
-                                :disabled="$enrollment?->steps->firstWhere('id', $activeStepId)?->is_completed">
+                wire:click="markLessonAsCompleted"
+                :disabled="$enrollment?->steps->firstWhere('id', $activeStepId)?->is_completed">
                 Отметить как завершенный
             </x-filament::button>
         </div>
@@ -26,8 +25,10 @@
             @include('filament.pages.intern.lesson-video', ['data' => $lesson->media])
         </div>
 
+{{--
         <div class="mt-2 mx-auto max-w-7xl">
-            <p>Статус: {{ $lesson->is_completed ? 'Завершено' : 'Не завершено' }}</p>
+            <p>Статус: {{ $activeStep->is_completed ? 'Завершено' : 'Не завершено' }}</p>
         </div>
+--}}
     @endif
 </div>

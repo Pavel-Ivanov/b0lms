@@ -14,21 +14,21 @@ class MyTestsResults extends BaseWidget
     {
         return $table
             ->heading('Результаты тестов')
-            ->defaultGroup('quiz.name')
+/*            ->defaultGroup('quiz.name')
             ->groupingDirectionSettingHidden()
             ->groups([
                 Group::make('quiz.name')
                     ->titlePrefixedWithLabel(false)
                     ->collapsible(),
-            ])
+            ])*/
 
             ->query(
                     Test::query()
                         ->where('user_id', auth()->id())
                 )
                 ->columns([
-    /*                Tables\Columns\TextColumn::make('quiz.name')
-                        ->label('Тест'),*/
+                    Tables\Columns\TextColumn::make('quiz.name')
+                        ->label('Тест'),
                     Tables\Columns\TextColumn::make('created_at')
                         ->label('Дата'),
                     Tables\Columns\TextColumn::make('questions_count')

@@ -2,7 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Filament\Pages\Intern\EnrollmentView;
 use App\Models\Enrollment;
+use App\Models\EnrollmentStep;
 use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\Test;
@@ -23,6 +25,7 @@ class QuizForm extends Component implements HasForms
     use InteractsWithForms;
 
     public Enrollment $enrollment;
+    public EnrollmentStep $activeStep;
     public Quiz $quiz;
     public Collection $questions;
     public ?array $data = [];
@@ -33,18 +36,17 @@ class QuizForm extends Component implements HasForms
     public int $startTimeSeconds = 0;
 
 
-    public function mount(Quiz $quiz, Enrollment $enrollment)
+    public function mount(Quiz $quiz, Enrollment $enrollment, EnrollmentStep $activeStep)
     {
         $this->quiz = $quiz;
         $this->enrollment = $enrollment;
+        $this->activeStep = $activeStep;
         $this->questions = $this->quiz->questions()->with('questionOptions')->get();
         $this->correctAnswers = $this->questions
             ->mapWithKeys(fn (Question $question) => [$question->id => $question->correctQuestionOption()->id])
             ->toArray();
         $this->startTimeSeconds = now()->timestamp;
         $this->form->fill();
-//        dump($this->form);
-//        dump($this->quiz, $this->enrollment, $this->questions, $this->correctAnswers);
     }
 
     public function form(Form $form): Form
@@ -52,13 +54,8 @@ class QuizForm extends Component implements HasForms
         $steps = [];
         $i = 1;
 
-//        $questions = $this->questions->toArray();
         $questions = $this->quiz->questions()->with('questionOptions')->get()->toArray();
         foreach ($questions as $question) {
-//            if ($i === 2) {
-//                dump($question);
-//            }
-//            dump($question['question_options']);
             $steps[] = Step::make('Вопрос ' . $i)
                 ->schema([
                     Radio::make($question['id'])
@@ -117,10 +114,16 @@ class QuizForm extends Component implements HasForms
 
         $test->update(['result' => $result]);
 
+        $this->activeStep->update(['is_completed' => true]);
+
         $count = count(array_diff($this->correctAnswers, $this->data));
         $this->completed = true;
         $this->state = $count === 0 ? 'success' : 'failure';
         $this->message = $count === 0 ? 'Вы ответили правильно на все вопросы!' : 'У Вас ' . $count . ' неправильных ответов!';
+
+        // Если хотите вернуться на страницу результатов, можно использовать Livewire's $this->redirect(route('intern.enrollment.results', ['enrollment' => $this->enrollment->id]))'
+        // Если хотите вернуться на предыдущую страницу, можно использовать Laravel's redirect()->back() или Livewire's $this->redirect()->back()
+//        $this->redirect(request()->header('Referer'));
     }
 
     public function render()

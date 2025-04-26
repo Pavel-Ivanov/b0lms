@@ -5,9 +5,9 @@
         <div class="flex-1 xl:flex">
             <div class="px-4 py-6 sm:px-6 lg:pl-8 xl:w-64 xl:shrink-0 xl:pl-6">
                 @if ($activeLesson)
-                    @include('filament.pages.intern.lesson-content', ['lesson' => $activeLesson, 'enrollment' => $this->getEnrollment()])
+                    @include('filament.pages.intern.lesson-content', ['lesson' => $activeLesson, 'enrollment' => $this->getEnrollment(), 'activeStep' => $this->getActiveStep()])
                 @elseif ($activeQuiz)
-                    @include('filament.pages.intern.quiz-content', ['quiz' => $activeQuiz, 'enrollment' => $this->getEnrollment()])
+                    @include('filament.pages.intern.quiz-content', ['quiz' => $activeQuiz, 'enrollment' => $this->getEnrollment(), 'activeStep' => $this->getActiveStep()])
                 @else
                     <div>
                         <h2>Информация о назначении</h2>

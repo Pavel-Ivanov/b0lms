@@ -35,9 +35,6 @@ class AssignedCoursesWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('completion_deadline')
                     ->label('Дата окончания')
                     ->date('d-m-Y'),
-/*                Tables\Columns\TextColumn::make('steps_count')
-                    ->label('Кол-во шагов')
-                    ->counts('steps'),*/
                 ProgressBar::make('bar')
                     ->label('Выполнено')
                     ->getStateUsing(function (Enrollment $record) {
@@ -65,8 +62,8 @@ class AssignedCoursesWidget extends BaseWidget
                     ->icon('heroicon-o-arrow-right')
                     ->url(function (Enrollment $record):string {
                         return EnrollmentView::getUrl([
-                            'record' => $record->id,
-                            'step' => 0,
+                            'enrollment_id' => $record->id,
+                            'step_id' => 0,
                         ]);
                     }),
             ]);
