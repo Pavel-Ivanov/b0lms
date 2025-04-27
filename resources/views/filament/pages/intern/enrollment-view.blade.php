@@ -1,7 +1,7 @@
 <x-filament-panels::page>
 
     <div class="mx-auto w-full max-w-7xl grow flex flex-col-reverse lg:flex-row xl:px-2">
-        <!-- Left sidebar & main wrapper -->
+        <!-- Main content -->
         <div class="flex-1 xl:flex">
             <div class="px-4 py-6 sm:px-6 lg:pl-8 xl:w-64 xl:shrink-0 xl:pl-6">
                 @if ($activeLesson)
@@ -16,7 +16,7 @@
                     </div>
                 @endif
             </div>
-
+            <!-- Main content bottom -->
             <div class="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">
 
             </div>
@@ -24,11 +24,7 @@
         <!-- Right sidebar -->
         <div class="shrink-0 px-4 py-6 sm:px-6 lg:max-w-xs lg:pr-8 xl:pr-6 lg:order-first break-words">
             @include('filament.pages.intern.enrollment-progress')
-            <ul role="list" class="divide-y divide-gray-200">
-                @foreach($this->getNavigation() as $item)
-                    @include($item['template'])
-                @endforeach
-            </ul>
+            <x-filament.intern.enrollment-navigation :enrollment="$enrollment" :active-step-id="$activeStep?->id" />
         </div>
     </div>
 

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages\Intern;
 
-use App\Models\Test;
+//use App\Models\Test;
 use Filament\Pages\Page;
 use App\Models\Enrollment;
 use App\Models\EnrollmentStep;
@@ -10,7 +10,8 @@ use App\Models\Lesson;
 use App\Models\Quiz;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+//use Illuminate\Database\Eloquent\Model;
+//use Illuminate\View\View;
 
 /**
  * Class EnrollmentView
@@ -28,8 +29,7 @@ class EnrollmentView extends Page
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $slug = 'enrollments';
 
-//    public Enrollment | int | string | null $record;
-    public Enrollment | int | string | null $enrollment;
+    public Enrollment $enrollment;
 
     /**
      * The collection of enrollment steps.
@@ -38,7 +38,7 @@ class EnrollmentView extends Page
      * It represents the sequence of steps (lessons, quizzes, etc.) that a user needs to complete
      * as part of their enrollment in a course.
      *
-     * @var Collection<int, EnrollmentStep>
+     * @var Collection<EnrollmentStep>
      */
     public Collection $steps;
 
@@ -94,7 +94,6 @@ class EnrollmentView extends Page
      */
     public function mount(int|string $enrollment_id, ?int $step_id = null): void
     {
-//        $this->record = Enrollment::findOrFail($enrollment_id);
         $this->enrollment = Enrollment::findOrFail($enrollment_id);
         $this->steps = $this->enrollment->steps;
         $this->activeStepId = $step_id;
@@ -161,7 +160,7 @@ class EnrollmentView extends Page
      *               - active: Boolean indicating if this is the currently active step
      *               - completed: Boolean indicating if the step has been completed
      */
-    public function getNavigation(): array
+/*    public function getNavigation(): array
     {
         return $this->steps->map(function (EnrollmentStep $enrollmentStep) {
             $url = route('filament.intern.pages.enrollments', ['enrollment_id' => $this->enrollment, 'step_id' => $enrollmentStep->id]);
@@ -209,7 +208,7 @@ class EnrollmentView extends Page
                 'results' => $results,
             ];
         })->toArray();
-    }
+    }*/
 
     public function getEnrollment(): Enrollment
     {
@@ -260,4 +259,14 @@ class EnrollmentView extends Page
         $this->steps = $this->enrollment->steps()->get();
         $this->loadStepContent($this->activeStepId);
     }
+
+/*    public function render(): View
+    {
+        return view('filament.pages.intern.enrollment-view', [
+            'navigation' => view('filament.intern.components.enrollment-navigation', [
+                'enrollment' => $this->enrollment,
+                'activeStepId' => $this->activeStep?->id,
+            ]),
+        ]);
+    }*/
 }
