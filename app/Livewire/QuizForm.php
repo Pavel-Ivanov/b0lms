@@ -30,6 +30,7 @@ class QuizForm extends Component implements HasForms
     public Collection $questions;
     public ?array $data = [];
     public array $correctAnswers = [];
+
     public bool $completed = false;
     public ?string $message = null;
     public ?string $state = null;
@@ -87,7 +88,6 @@ class QuizForm extends Component implements HasForms
 
     public function submit(): void
     {
-        // Перенесите сюда логику из submit() метода QuizView
         $result = 0;
 
         $test = Test::create([
@@ -124,6 +124,16 @@ class QuizForm extends Component implements HasForms
         // Если хотите вернуться на страницу результатов, можно использовать Livewire's $this->redirect(route('intern.enrollment.results', ['enrollment' => $this->enrollment->id]))'
         // Если хотите вернуться на предыдущую страницу, можно использовать Laravel's redirect()->back() или Livewire's $this->redirect()->back()
 //        $this->redirect(request()->header('Referer'));
+    }
+
+    public function viewDetails()
+    {
+
+    }
+
+    public function resetResults()
+    {
+
     }
 
     public function render()
