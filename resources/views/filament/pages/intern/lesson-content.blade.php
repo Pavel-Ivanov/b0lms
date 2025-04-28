@@ -1,3 +1,9 @@
+{{--
+    Variables:
+    - $quiz: The Quiz object containing quiz details
+    - $enrollment: The Enrollment object for the current user
+    - $activeStep: The current active step in the quiz
+--}}
 <div>
     @if ($lesson)
         <div class="flex justify-end">

@@ -1,3 +1,10 @@
+{{--
+    Variables:
+    - $quiz: The Quiz object containing quiz details
+    - $enrollment: The Enrollment object for the current user
+    - $activeStep: The current active step in the quiz
+--}}
+@dump($quiz, $enrollment, $activeStep)
 <div>
     @if ($quiz)
         <div class="">
@@ -9,11 +16,5 @@
         <div class="mt-2 mx-auto max-w-7xl border-b pb-4">
             <livewire:quiz-form :quiz="$quiz" :enrollment="$enrollment" :activeStep="$activeStep"/>
         </div>
-
-{{--
-        <div class="mt-2 mx-auto max-w-7xl">
-            <p>Статус: {{ $activeStep->is_completed ? 'Завершено' : 'Не завершено' }}</p>
-        </div>
---}}
     @endif
 </div>
