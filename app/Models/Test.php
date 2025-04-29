@@ -14,12 +14,18 @@ class Test extends Model
         'ip_address',
         'time_spent',
         'user_id',
+        'enrollment_step_id',
         'quiz_id',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function enrollmentStep(): BelongsTo
+    {
+        return $this->belongsTo(EnrollmentStep::class);
     }
 
     public function quiz(): BelongsTo
