@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Filament\Pages\Intern;
+namespace App\Filament\Intern\Pages;
 
 //use App\Models\Test;
-use Filament\Pages\Page;
 use App\Models\Enrollment;
 use App\Models\EnrollmentStep;
 use App\Models\Lesson;
 use App\Models\Quiz;
+use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
+
 //use Illuminate\Database\Eloquent\Model;
 //use Illuminate\View\View;
 
@@ -25,7 +26,7 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class EnrollmentView extends Page
 {
-    protected static string $view = 'filament.pages.intern.enrollment-view';
+    protected static string $view = 'filament.intern.pages.enrollment-view';
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $slug = 'enrollments';
 
