@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\StepType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EnrollmentStep extends Model
 {
@@ -40,6 +41,11 @@ class EnrollmentStep extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function tests(): HasMany
+    {
+        return $this->hasMany(Test::class);
     }
 
     public function stepableType(): string
