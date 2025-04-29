@@ -4,7 +4,7 @@
     - $enrollment: The Enrollment object for the current user
     - $activeStep: The current active step in the quiz
 --}}
-@dump($quiz, $enrollment, $activeStep)
+{{--@dump($quiz, $enrollment, $activeStep)--}}
 <div>
     @if ($quiz)
         <div class="">
