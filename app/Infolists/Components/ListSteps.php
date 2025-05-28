@@ -2,13 +2,13 @@
 
 namespace App\Infolists\Components;
 
-use App\Filament\Student\Resources\CourseResource;
 use App\Models\Enrollment;
 use App\Models\EnrollmentStep;
 use App\Models\Lesson;
 use App\Models\Quiz;
 use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\Concerns\HasName;
+use Filament\Student\Resources\CourseResource;
 use Illuminate\Support\Collection;
 
 class ListSteps extends Component
