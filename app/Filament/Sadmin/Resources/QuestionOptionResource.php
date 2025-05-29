@@ -32,12 +32,17 @@ class QuestionOptionResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('question_id')
-                    ->relationship('question', 'id')
+                    ->label('Вопрос')
+                    ->relationship('question', 'question_text')
+                    ->searchable()
+                    ->preload()
                     ->required(),
                 Forms\Components\TextInput::make('option')
+                    ->label('Ответ')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Toggle::make('correct')
+                    ->label('Правильный')
                     ->required(),
             ]);
     }
@@ -75,11 +80,40 @@ class QuestionOptionResource extends Resource
                     ->toggle()
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->hiddenLabel(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->action(function ($records) {
+                            $referencedOptions = [];
+
+                            foreach ($records as $record) {
+                                $testAnswersCount = \App\Models\TestAnswer::where('option_id', $record->id)->count();
+                                if ($testAnswersCount > 0) {
+                                    $referencedOptions[] = [
+                                        'option' => $record->option,
+                                        'count' => $testAnswersCount
+                                    ];
+                                } else {
+                                    $record->delete();
+                                }
+                            }
+
+                            if (!empty($referencedOptions)) {
+                                $message = "Следующие опции не могут быть удалены, так как они используются в ответах тестов:\n";
+                                foreach ($referencedOptions as $option) {
+                                    $message .= "- \"{$option['option']}\" используется в {$option['count']} ответах\n";
+                                }
+
+                                \Filament\Notifications\Notification::make()
+                                    ->danger()
+                                    ->title('Некоторые опции используются')
+                                    ->body($message)
+                                    ->send();
+                            }
+                        }),
                 ]),
             ]);
     }
