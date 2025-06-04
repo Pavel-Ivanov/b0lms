@@ -2,9 +2,24 @@
 
 use Tests\TestCase;
 use App\Models\CompanyPosition;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Tests\Traits\DatabaseTestTables;
 
-uses(TestCase::class, RefreshDatabase::class);
+uses(TestCase::class, DatabaseTransactions::class, DatabaseTestTables::class);
+
+beforeEach(function () {
+    // Make sure we're using SQLite in-memory database
+    config(['database.default' => 'sqlite']);
+    config(['database.connections.sqlite.database' => ':memory:']);
+
+    // Enable foreign key support for SQLite
+    DB::statement('PRAGMA foreign_keys = ON');
+
+    // Create necessary tables for testing
+    $this->createTestTables();
+});
 
 it('can connect to the database', function () {
     expect(DB::connection()->getPdo())->toBeInstanceOf(PDO::class);
