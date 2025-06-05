@@ -573,3 +573,131 @@ it('retrieves completed steps correctly', function () {
     $updatedCompletedPositions = $updatedCompletedSteps->pluck('position')->toArray();
     expect($updatedCompletedPositions)->toBe([1, 2, 3, 5]);
 });
+
+it('checks if enrollment is completed', function () {
+    // Create a user, course, and enrollment
+    $user = User::factory()->create();
+
+    // Create required related models
+    $courseType = CourseType::create(['name' => 'Test Type']);
+    $courseLevel = CourseLevel::create(['name' => 'Test Level']);
+    $courseCategory = CourseCategory::create(['name' => 'Test Category']);
+
+    $course = Course::create([
+        'name' => 'Test Course',
+        'course_type_id' => $courseType->id,
+        'course_level_id' => $courseLevel->id,
+        'course_category_id' => $courseCategory->id,
+    ]);
+
+    // Create an enrollment with is_steps_created = false
+    $enrollment = Enrollment::create([
+        'course_id' => $course->id,
+        'user_id' => $user->id,
+        'enrollment_date' => now(),
+        'completion_deadline' => now()->addDays(30),
+        'is_steps_created' => false,
+    ]);
+
+    // Enrollment without steps should not be considered completed
+    expect($enrollment->isCompleted())->toBeFalse();
+
+    // Update enrollment to have steps
+    $enrollment->update(['is_steps_created' => true]);
+    $enrollment->refresh();
+
+    // Create 3 enrollment steps, all incomplete
+    for ($i = 1; $i <= 3; $i++) {
+        EnrollmentStep::create([
+            'enrollment_id' => $enrollment->id,
+            'course_id' => $course->id,
+            'user_id' => $user->id,
+            'stepable_id' => $i,
+            'stepable_type' => 'App\\Models\\Lesson',
+            'position' => $i,
+            'is_completed' => false,
+        ]);
+    }
+
+    // Enrollment with incomplete steps should not be considered completed
+    expect($enrollment->isCompleted())->toBeFalse();
+
+    // Mark one step as completed
+    EnrollmentStep::where('enrollment_id', $enrollment->id)
+        ->where('position', 1)
+        ->update(['is_completed' => true]);
+
+    // Enrollment with some incomplete steps should not be considered completed
+    expect($enrollment->isCompleted())->toBeFalse();
+
+    // Mark all steps as completed
+    EnrollmentStep::where('enrollment_id', $enrollment->id)
+        ->update(['is_completed' => true]);
+
+    // Enrollment with all steps completed should be considered completed
+    expect($enrollment->isCompleted())->toBeTrue();
+});
+
+it('checks for incomplete enrollments', function () {
+    // Create a user and two courses
+    $user = User::factory()->create();
+    $anotherUser = User::factory()->create();
+
+    // Create required related models
+    $courseType = CourseType::create(['name' => 'Test Type']);
+    $courseLevel = CourseLevel::create(['name' => 'Test Level']);
+    $courseCategory = CourseCategory::create(['name' => 'Test Category']);
+
+    $course1 = Course::create([
+        'name' => 'Course 1',
+        'course_type_id' => $courseType->id,
+        'course_level_id' => $courseLevel->id,
+        'course_category_id' => $courseCategory->id,
+    ]);
+
+    $course2 = Course::create([
+        'name' => 'Course 2',
+        'course_type_id' => $courseType->id,
+        'course_level_id' => $courseLevel->id,
+        'course_category_id' => $courseCategory->id,
+    ]);
+
+    // Initially there should be no incomplete enrollments
+    expect(Enrollment::hasIncompleteEnrollment($course1->id, $user->id))->toBeFalse();
+
+    // Create an enrollment for course1 and user
+    $enrollment = Enrollment::create([
+        'course_id' => $course1->id,
+        'user_id' => $user->id,
+        'enrollment_date' => now(),
+        'completion_deadline' => now()->addDays(30),
+        'is_steps_created' => true,
+    ]);
+
+    // Create steps for the enrollment
+    EnrollmentStep::create([
+        'enrollment_id' => $enrollment->id,
+        'course_id' => $course1->id,
+        'user_id' => $user->id,
+        'stepable_id' => 1,
+        'stepable_type' => 'App\\Models\\Lesson',
+        'position' => 1,
+        'is_completed' => false,
+    ]);
+
+    // Now there should be an incomplete enrollment for course1 and user
+    expect(Enrollment::hasIncompleteEnrollment($course1->id, $user->id))->toBeTrue();
+
+    // There should be no incomplete enrollment for course2 and user
+    expect(Enrollment::hasIncompleteEnrollment($course2->id, $user->id))->toBeFalse();
+
+    // There should be no incomplete enrollment for course1 and anotherUser
+    expect(Enrollment::hasIncompleteEnrollment($course1->id, $anotherUser->id))->toBeFalse();
+
+    // Mark all steps as completed
+    EnrollmentStep::where('enrollment_id', $enrollment->id)
+        ->update(['is_completed' => true]);
+
+    // Now there should be no incomplete enrollment for course1 and user
+    expect(Enrollment::hasIncompleteEnrollment($course1->id, $user->id))->toBeFalse();
+});
