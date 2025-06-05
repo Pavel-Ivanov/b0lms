@@ -4,8 +4,10 @@ namespace App\Filament\Sadmin\Resources\EnrollmentResource\Pages;
 
 use App\Filament\Sadmin\Resources\EnrollmentResource;
 use Filament\Actions;
+use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\HtmlString;
 
 class EditEnrollment extends EditRecord
 {
@@ -15,22 +17,49 @@ class EditEnrollment extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->action(function ($data, $record) {
-                    if ($record->steps()->count() > 0) {
-                        Notification::make()
-                            ->danger()
-                            ->title('Это значение используется')
-                            ->body('У Назначения есть Программа обучения и оно не может быть удалено.')
-                            ->send();
-                        return;
+                ->requiresConfirmation()
+                ->modalHeading('Удаление назначения')
+                ->modalDescription(function ($record) {
+                    $hasSteps = $record->steps()->count() > 0;
+                    $hasTestResults = false;
+
+                    // Check if any enrollment steps have test results
+                    foreach ($record->steps as $step) {
+                        if ($step->tests()->count() > 0) {
+                            $hasTestResults = true;
+                            break;
+                        }
                     }
+
+                    $message = '';
+                    if ($hasSteps && $hasTestResults) {
+                        $message = 'У Назначения есть Программа обучения и Результаты Тестов. Вы уверены, что хотите удалить их вместе с Назначением?';
+                    } elseif ($hasSteps) {
+                        $message = 'У Назначения есть Программа обучения. Вы уверены, что хотите удалить её вместе с Назначением?';
+                    } elseif ($hasTestResults) {
+                        $message = 'У Назначения есть Результаты Тестов. Вы уверены, что хотите удалить их вместе с Назначением?';
+                    } else {
+                        $message = 'Вы уверены, что хотите удалить это назначение? Это действие нельзя отменить.';
+                    }
+
+                    return new HtmlString('<div style="font-size: 1.2rem; font-weight: bold; color: red;">' . $message . '</div>');
+                })
+                ->modalSubmitActionLabel('Да, удалить')
+                ->modalCancelActionLabel('Отмена')
+                ->action(function ($record) {
+                    $recordId = $record->id;
+                    $enrollment = \App\Models\Enrollment::find($recordId);
+                    if ($enrollment) {
+                        $enrollment->delete();
+                    }
+
                     Notification::make()
                         ->success()
-                        ->title('Значение удалено')
-                        ->body('Значение успешно удалено.')
+                        ->title('Назначение удалено')
+                        ->body('Назначение успешно удалено.')
                         ->send();
-                    $record->delete();
-                    redirect()->to(self::getResource()::getUrl('index'));
+
+                    return redirect(self::getResource()::getUrl('index'));
                 }),
 
         ];
@@ -40,4 +69,5 @@ class EditEnrollment extends EditRecord
     {
         return self::getResource()::getUrl('index');
     }
+
 }

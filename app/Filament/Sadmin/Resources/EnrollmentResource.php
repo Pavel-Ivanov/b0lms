@@ -56,36 +56,36 @@ class EnrollmentResource extends Resource
                                             ->label('Курс')
                                             ->relationship('course', 'name')
                                             ->preload()
-                                            ->required(),
+                                            ->required()
+                                            ->disabled(fn (?Enrollment $record) => $record !== null)
+                                            ->helperText(fn (?Enrollment $record) => $record !== null ? 'Это поле недоступно для редактирования' : null),
                                         Forms\Components\Select::make('user_id')
                                             ->label('Студент')
-                                            ->relationship('user', 'name')
+                                            ->relationship('user', 'name', fn ($query) => $query->whereHas('roles', function ($q) {
+                                                $q->where('name', 'Студент');
+                                            }))
                                             ->preload()
-                                            ->required(),
+                                            ->required()
+                                            ->disabled(fn (?Enrollment $record) => $record !== null)
+                                            ->helperText(fn (?Enrollment $record) => $record !== null ? 'Это поле недоступно для редактирования' : null),
                                         Forms\Components\DateTimePicker::make('enrollment_date')
                                             ->label('Дата начала обучения')
                                             ->date()
                                             ->required()
-                                            ->default(now()),
+                                            ->default(now())
+                                            ->disabled(fn (?Enrollment $record) => $record !== null)
+                                            ->helperText(fn (?Enrollment $record) => $record !== null ? 'Это поле недоступно для редактирования' : null),
                                         Forms\Components\DatePicker::make('completion_deadline')
                                             ->label('Дата окончания обучения')
                                             ->date()
-                                            ->default(now()->addMonth()),
-                                    ])
-                                    ->footerActions([
-                                        Action::make('set_steps')
-                                            ->label('Создать план обучения')
-                                            ->icon('heroicon-o-clipboard-document-list')
-                                            ->color('success')
-                                            ->requiresConfirmation()
-                                            ->action(function (?Enrollment $record) {
-                                                if ($record) {
-                                                    static::setSteps($record);
-                                                }
-                                            })
-                                            ->hidden(function (?Enrollment $record) {
-                                                return !$record || $record->hasSteps();
-                                            }),
+                                            ->default(now()->addMonth())
+                                            ->rules([
+                                                fn (Forms\Get $get): string => 'after_or_equal:' . $get('enrollment_date'),
+                                            ])
+                                            ->validationAttribute('Дата окончания обучения')
+                                            ->validationMessages([
+                                                'after_or_equal' => 'Дата окончания обучения не может быть меньше даты начала обучения',
+                                            ]),
                                     ])
                                 ->columns(2),
                             ]),
@@ -287,52 +287,4 @@ class EnrollmentResource extends Resource
         ];
     }
 
-    public static function setSteps($record): void
-    {
-        if ($record->is_steps_created) {
-            return;
-        }
-
-        $course = $record->course;
-        if (!$course) {
-            throw new \Exception('Enrollment must be related to a course.');
-        }
-
-        $userId = $record->user_id;
-        if (!$userId) {
-            throw new \Exception('Enrollment must be associated with a user.');
-        }
-
-        $stepsData = $course->getSteps();
-        $steps = [];
-        foreach ($stepsData as $index => $step) {
-            $steps[] = [
-                'enrollment_id' => $record->id,
-                'course_id' => $course->id,
-                'user_id' => $userId,
-                'stepable_id' => $step['stepable_id'],
-                'stepable_type' => $step['stepable_type'],
-                'position' => $index + 1,
-                'is_completed' => false,
-            ];
-        }
-
-        $insertedCount = DB::table('enrollment_steps')->insertOrIgnore($steps);
-
-        if ($insertedCount === count($steps)) {
-            $record->update(['is_steps_created' => true]);
-
-            Notification::make()
-                ->success()
-                ->title('Шаги успешно созданы')
-                ->send();
-        }
-        else {
-            Notification::make()
-                ->warning()
-                ->title('Не все шаги были созданы')
-                ->body("Создано {$insertedCount} из " . count($steps) . " шагов.")
-                ->send();
-        }
-    }
 }
