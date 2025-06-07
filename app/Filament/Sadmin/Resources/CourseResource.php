@@ -100,61 +100,80 @@ class CourseResource extends Resource
                         Tabs\Tab::make('Уроки')
                             ->schema([
                                 Repeater::make('lessons')
-                                    ->label('Уроки')
+                                    ->hiddenLabel()
                                     ->relationship('lessons')
                                     ->schema([
                                         Forms\Components\TextInput::make('name')
                                             ->label('Название')
                                             ->required()
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('position')
-                                            ->label('Позиция')
+                                        Forms\Components\Textarea::make('announcement')
+                                            ->label('Анонс')
                                             ->required()
-                                            ->numeric()
-                                            ->default(0),
+                                            ->columnSpanFull(),
                                         Forms\Components\Toggle::make('is_published')
                                             ->label('Опубликован')
                                             ->required(),
-                                        Forms\Components\Hidden::make('course_id')
-                                            ->default(fn (): ?int => $form->model['id'] ?? null)
+                                        Forms\Components\Hidden::make('position')
+//                                            ->label('Позиция')
+                                            ->required()
+//                                            ->numeric()
+                                            ->default(0),
+/*                                        Forms\Components\Hidden::make('course_id')
+                                            ->default(fn (): ?int => $form->model['id'] ?? null)*/
                                     ])
-                                    ->itemLabel(fn (array $state): ?string => $state['position'] . '. ' . $state['name'] ?? null)
+//                                    ->hint('')
+//                                    ->hintColor('primary')
+                                    ->helperText('Возможно только редактирование Названия урока, Анонса и статуса Опубликован.
+                                        Порядок уроков можно менять с помощью перетаскивания.
+                                        Все остальные действия с Уроком выполняются непосредственно в форме редактирования Урока.')
+//                                    ->itemLabel(fn (array $state): ?string => $state['position'] . '. ' . $state['name'] ?? null)
+                                    ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
                                     ->orderColumn('position')
+                                    ->reorderableWithButtons()
                                     ->columns()
                                     ->collapsible()
                                     ->collapsed()
-                                    ->addActionLabel('Добавить урок')
-                                    ->defaultItems(0),
+                                    ->addable(false)
+                                    ->deletable(false)
+//                                    ->addActionLabel('Добавить урок')
+//                                    ->defaultItems(0)
+                                ,
                             ]),
                         Tabs\Tab::make('Назначения')
                             ->schema([
                                 Repeater::make('enrollments')
-                                    ->label('Назначения курсов')
+                                    ->hiddenLabel()
                                     ->relationship('enrollments')
                                     ->schema([
-                                        Forms\Components\Select::make('user_id')
+/*                                        Forms\Components\Select::make('user_id')
                                             ->label('Студент')
                                             ->relationship('user', 'name')
                                             ->required(),
                                         Forms\Components\DateTimePicker::make('enrollment_date')
                                             ->label('Дата начала обучения')
-                                            ->required(),
+                                            ->required(),*/
                                         Forms\Components\DatePicker::make('completion_deadline')
                                             ->label('Дата окончания обучения')
                                             ->date(),
-                                        Forms\Components\Hidden::make('course_id')
-                                            ->default(fn (): ?int => $form->model['id'] ?? null)
+/*                                        Forms\Components\Hidden::make('course_id')
+                                            ->default(fn (): ?int => $form->model['id'] ?? null)*/
                                     ])
                                     ->itemLabel(function (array $state): ?string {
                                         if (empty($state['user_id'])) {
                                             return '';
                                         }
-                                        return Enrollment::where('id', $state['id'])->first()->enrollmentInfo();                                    })
+                                        return Enrollment::where('id', $state['id'])->first()->enrollmentInfo();
+                                    })
+                                    ->helperText('Возможно только редактирование Даты окончания обучения.
+                                        Все остальные действия с Назначением выполняются непосредственно в форме редактирования Назначения.')
                                     ->columns()
                                     ->collapsible()
                                     ->collapsed()
-                                    ->addActionLabel('Добавить назначение')
-                                    ->defaultItems(0),
+                                    ->addable(false)
+                                    ->deletable(false)
+//                                    ->addActionLabel('Добавить назначение')
+//                                    ->defaultItems(0),
                             ]),
                     ])
                     ->persistTab()
