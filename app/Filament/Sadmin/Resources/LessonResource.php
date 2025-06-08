@@ -2,14 +2,15 @@
 
 namespace App\Filament\Sadmin\Resources;
 
+use AmidEsfahani\FilamentTinyEditor\TinyEditor;
 use App\Filament\Sadmin\Resources\LessonResource\Pages;
 use App\Filament\Sadmin\Resources\LessonResource\RelationManagers;
 use App\Models\Lesson;
-use App\Models\Question;
-use App\Models\QuestionOption;
-use Awcodes\Matinee\Matinee;
+//use App\Models\Question;
+//use App\Models\QuestionOption;
+//use Awcodes\Matinee\Matinee;
 use Filament\Forms;
-use Filament\Forms\Components\RichEditor;
+//use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
@@ -18,9 +19,9 @@ use Filament\Tables;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Hugomyb\FilamentMediaAction\Forms\Components\Actions\MediaAction;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+//use Hugomyb\FilamentMediaAction\Forms\Components\Actions\MediaAction;
+//use Illuminate\Database\Eloquent\Builder;
+//use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class LessonResource extends Resource
 {
@@ -64,12 +65,19 @@ class LessonResource extends Resource
                             ]),
                         Tabs\Tab::make('Содержание урока')
                             ->schema([
-                                Forms\Components\RichEditor::make('lesson_content')
+                                TinyEditor::make('lesson_content')
+                                    ->fileAttachmentsDisk('public')
+                                    ->fileAttachmentsVisibility('public')
+                                    ->fileAttachmentsDirectory('lesson_images')
+                                    ->profile('custom')
+                                    ->columnSpan('full')
+                                    ->required(),
+/*                                Forms\Components\RichEditor::make('lesson_content')
                                     ->label('Содержание урока')
                                     ->fileAttachmentsDisk('public')
                                     ->fileAttachmentsDirectory('lesson_images')
                                     ->fileAttachmentsVisibility('public')
-                                    ->columnSpanFull(),
+                                    ->columnSpanFull(),*/
                             ]),
                         Tabs\Tab::make('Медиа')
                             ->schema([
