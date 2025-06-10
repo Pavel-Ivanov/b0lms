@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "amidesfahani/filament-tinyeditor": "^2.1",
+        "awcodes/filament-tiptap-editor": "^3.5",
         "awcodes/matinee": "^1.0",
         "bezhansalleh/filament-shield": "^3.3",
         "filament/filament": "^3.2",
