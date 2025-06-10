@@ -39,6 +39,8 @@ class QuizResource extends Resource
                                 Forms\Components\Select::make('lesson_id')
                                     ->label('Урок')
                                     ->relationship('lesson', 'name')
+                                    ->preload()
+                                    ->searchable()
                                     ->required(),
                                 Forms\Components\TextInput::make('name')
                                     ->label('Название теста')
@@ -62,6 +64,7 @@ class QuizResource extends Resource
                                             ->required()
                                             ->columnSpanFull(),
                                         Forms\Components\Repeater::make('questionOptions')
+                                            ->label('Ответы')
                                             ->required()
                                             ->relationship()
                                             ->columnSpanFull()
@@ -77,11 +80,20 @@ class QuizResource extends Resource
                                                 Forms\Components\Checkbox::make('correct')
                                                     ->label('Правильный ответ'),
                                             ])
+                                            ->itemLabel(function (array $state): ?string {
+                                                if (empty($state['option'])) {
+                                                    return '';
+                                                }
+                                                return $state['option'];
+                                            })
+
                                             ->columns()
                                             ->addActionLabel('Добавить ответ')
                                             ->reorderable(true)
                                             ->reorderableWithButtons()
-                                            ->cloneable(),
+                                            ->cloneable()
+                                            ->collapsible()
+                                            ->collapsed(),
                                         Forms\Components\Textarea::make('hint')
                                             ->label('Подсказка')
                                             ->columnSpanFull(),
@@ -150,11 +162,12 @@ class QuizResource extends Resource
                 Tables\Actions\EditAction::make()
                 ->hiddenLabel(),
             ])
-            ->bulkActions([
+/*            ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])*/
+            ->persistFiltersInSession();
     }
 
     public static function getRelations(): array
