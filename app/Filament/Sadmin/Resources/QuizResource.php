@@ -66,10 +66,14 @@ class QuizResource extends Resource
                                             ->relationship()
                                             ->columnSpanFull()
                                             ->schema([
-                                                Forms\Components\TextInput::make('option')
+                                                Forms\Components\Textarea::make('option')
                                                     ->label('Ответ')
                                                     ->required()
-                                                    ->hiddenLabel(),
+                                                    ->columnSpanFull(),
+                                                Forms\Components\Textarea::make('rationale')
+                                                    ->label('Объяснение ответа')
+                                                    ->nullable()
+                                                    ->columnSpanFull(),
                                                 Forms\Components\Checkbox::make('correct')
                                                     ->label('Правильный ответ'),
                                             ])
@@ -78,8 +82,8 @@ class QuizResource extends Resource
                                             ->reorderable(true)
                                             ->reorderableWithButtons()
                                             ->cloneable(),
-                                        Forms\Components\Textarea::make('answer_explanation')
-                                            ->label('Объяснение правильного ответа')
+                                        Forms\Components\Textarea::make('hint')
+                                            ->label('Подсказка')
                                             ->columnSpanFull(),
                                         Forms\Components\TextInput::make('more_info_link')
                                             ->label('Ссылка на дополнительную информацию')

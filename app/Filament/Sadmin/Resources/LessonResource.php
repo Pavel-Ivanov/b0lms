@@ -148,7 +148,7 @@ class LessonResource extends Resource
                                                                                     ->reorderable(true)
                                                                                     ->reorderableWithButtons()
                                                                                     ->cloneable(),
-                                                                                Forms\Components\Textarea::make('answer_explanation')
+                                                                                Forms\Components\Textarea::make('hint')
                                                                                     ->label('Объяснение правильного ответа')
                                                                                     ->columnSpanFull(),
                                                                                 Forms\Components\TextInput::make('more_info_link')

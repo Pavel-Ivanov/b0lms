@@ -37,10 +37,14 @@ class QuestionOptionResource extends Resource
                     ->searchable()
                     ->preload()
                     ->required(),
-                Forms\Components\TextInput::make('option')
+                Forms\Components\Textarea::make('option')
                     ->label('Ответ')
                     ->required()
-                    ->maxLength(255),
+                    ->columnSpanFull(),
+                Forms\Components\Textarea::make('rationale')
+                    ->label('Объяснение ответа')
+                    ->nullable()
+                    ->columnSpanFull(),
                 Forms\Components\Toggle::make('correct')
                     ->label('Правильный')
                     ->required(),
