@@ -1,15 +1,15 @@
 <?php
 
-use App\Filament\Sadmin\Resources\QuestionResource;
-use App\Models\Question;
+use App\Filament\Sadmin\Resources\QuizResource;
 use App\Models\Quiz;
-use App\Models\QuestionOption;
 use App\Models\User;
 use App\Models\Course;
 use App\Models\CourseType;
 use App\Models\CourseLevel;
 use App\Models\CourseCategory;
 use App\Models\Lesson;
+use App\Models\Question;
+use App\Models\QuestionOption;
 use App\Models\Test;
 use App\Models\TestAnswer;
 use Illuminate\Support\Facades\DB;
@@ -54,121 +54,7 @@ it('can render edit page', function () {
     // Arrange
     $this->actingAs(createAdminUser());
 
-    // Create a lesson first (required for quiz)
-    $courseType = CourseType::create(['name' => 'Test Type']);
-    $courseLevel = CourseLevel::create(['name' => 'Test Level']);
-    $courseCategory = CourseCategory::create(['name' => 'Test Category']);
-
-    $course = Course::create([
-        'name' => 'Test Course',
-        'course_type_id' => $courseType->id,
-        'course_level_id' => $courseLevel->id,
-        'course_category_id' => $courseCategory->id,
-    ]);
-
-    $lesson = Lesson::create([
-        'course_id' => $course->id,
-        'name' => 'Test Lesson',
-        'position' => 1,
-    ]);
-
-    // Create quiz manually instead of using factory
-    $quiz = Quiz::create([
-        'lesson_id' => $lesson->id,
-        'name' => 'Test Quiz',
-    ]);
-
-    // Create question manually
-    $question = Question::create([
-        'quiz_id' => $quiz->id,
-        'question_text' => 'Test Question',
-    ]);
-
-    // Act & Assert - skip for now as we're focusing on database setup
-    // $this->get(QuestionResource::getUrl('edit', ['record' => $question]))
-    //    ->assertSuccessful();
-    expect(true)->toBeTrue(); // Placeholder assertion
-});
-
-it('can create question', function () {
-    // Arrange
-    $this->actingAs(createAdminUser());
-
-    // Create a lesson first (required for quiz)
-    $courseType = CourseType::create(['name' => 'Test Type']);
-    $courseLevel = CourseLevel::create(['name' => 'Test Level']);
-    $courseCategory = CourseCategory::create(['name' => 'Test Category']);
-
-    $course = Course::create([
-        'name' => 'Test Course',
-        'course_type_id' => $courseType->id,
-        'course_level_id' => $courseLevel->id,
-        'course_category_id' => $courseCategory->id,
-    ]);
-
-    $lesson = Lesson::create([
-        'course_id' => $course->id,
-        'name' => 'Test Lesson',
-        'position' => 1,
-    ]);
-
-    // Create quiz manually instead of using factory
-    $quiz = Quiz::create([
-        'lesson_id' => $lesson->id,
-        'name' => 'Test Quiz',
-    ]);
-
-    // Create question directly instead of using Livewire
-    $question = Question::create([
-        'quiz_id' => $quiz->id,
-        'question_text' => 'Test question?',
-        'hint' => 'Test hint',
-        'more_info_link' => 'https://example.com',
-    ]);
-
-    // Create question options
-    QuestionOption::create([
-        'question_id' => $question->id,
-        'option' => 'Option 1',
-        'rationale' => 'Rationale 1',
-        'correct' => true,
-    ]);
-
-    QuestionOption::create([
-        'question_id' => $question->id,
-        'option' => 'Option 2',
-        'rationale' => 'Rationale 2',
-        'correct' => false,
-    ]);
-
-    // Assert
-    $this->assertDatabaseHas('questions', [
-        'quiz_id' => $quiz->id,
-        'question_text' => 'Test question?',
-        'hint' => 'Test hint',
-        'more_info_link' => 'https://example.com',
-    ]);
-
-    $this->assertDatabaseHas('question_options', [
-        'question_id' => $question->id,
-        'option' => 'Option 1',
-        'rationale' => 'Rationale 1',
-        'correct' => true,
-    ]);
-
-    $this->assertDatabaseHas('question_options', [
-        'question_id' => $question->id,
-        'option' => 'Option 2',
-        'rationale' => 'Rationale 2',
-        'correct' => false,
-    ]);
-});
-
-it('can update question', function () {
-    // Arrange
-    $this->actingAs(createAdminUser());
-
-    // Create a lesson first (required for quiz)
+    // Create necessary related models
     $courseType = CourseType::create(['name' => 'Test Type']);
     $courseLevel = CourseLevel::create(['name' => 'Test Level']);
     $courseCategory = CourseCategory::create(['name' => 'Test Category']);
@@ -192,71 +78,95 @@ it('can update question', function () {
         'name' => 'Test Quiz',
     ]);
 
-    // Create question with original values
-    $question = Question::create([
-        'quiz_id' => $quiz->id,
-        'question_text' => 'Original question?',
-        'hint' => 'Original hint',
-        'more_info_link' => 'https://original.com',
+    // Act & Assert - skip for now as we're focusing on database setup
+    // $this->get(QuizResource::getUrl('edit', ['record' => $quiz]))
+    //    ->assertSuccessful();
+    expect(true)->toBeTrue(); // Placeholder assertion
+});
+
+it('can create quiz', function () {
+    // Arrange
+    $this->actingAs(createAdminUser());
+
+    // Create necessary related models
+    $courseType = CourseType::create(['name' => 'Test Type']);
+    $courseLevel = CourseLevel::create(['name' => 'Test Level']);
+    $courseCategory = CourseCategory::create(['name' => 'Test Category']);
+
+    $course = Course::create([
+        'name' => 'Test Course',
+        'course_type_id' => $courseType->id,
+        'course_level_id' => $courseLevel->id,
+        'course_category_id' => $courseCategory->id,
     ]);
 
-    // Create original question options
-    $option1 = QuestionOption::create([
-        'question_id' => $question->id,
-        'option' => 'Original option 1',
-        'rationale' => 'Original rationale 1',
-        'correct' => true,
+    $lesson = Lesson::create([
+        'course_id' => $course->id,
+        'name' => 'Test Lesson',
+        'position' => 1,
     ]);
 
-    $option2 = QuestionOption::create([
-        'question_id' => $question->id,
-        'option' => 'Original option 2',
-        'rationale' => 'Original rationale 2',
-        'correct' => false,
-    ]);
-
-    // Act - update directly instead of using Livewire
-    $question->update([
-        'question_text' => 'Updated question?',
-        'hint' => 'Updated hint',
-        'more_info_link' => 'https://updated.com',
-    ]);
-
-    $option1->update([
-        'option' => 'Updated option 1',
-        'rationale' => 'Updated rationale 1',
-        'correct' => true,
-    ]);
-
-    $option2->update([
-        'option' => 'Updated option 2',
-        'rationale' => 'Updated rationale 2',
-        'correct' => false,
+    // Create quiz directly
+    $quiz = Quiz::create([
+        'lesson_id' => $lesson->id,
+        'name' => 'Test Quiz',
+        'description' => 'Test Quiz Description',
+        'is_published' => true,
     ]);
 
     // Assert
-    $this->assertDatabaseHas('questions', [
-        'id' => $question->id,
-        'quiz_id' => $quiz->id,
-        'question_text' => 'Updated question?',
-        'hint' => 'Updated hint',
-        'more_info_link' => 'https://updated.com',
+    $this->assertDatabaseHas('quizzes', [
+        'lesson_id' => $lesson->id,
+        'name' => 'Test Quiz',
+        'description' => 'Test Quiz Description',
+        'is_published' => true,
+    ]);
+});
+
+it('can update quiz', function () {
+    // Arrange
+    $this->actingAs(createAdminUser());
+
+    // Create necessary related models
+    $courseType = CourseType::create(['name' => 'Test Type']);
+    $courseLevel = CourseLevel::create(['name' => 'Test Level']);
+    $courseCategory = CourseCategory::create(['name' => 'Test Category']);
+
+    $course = Course::create([
+        'name' => 'Test Course',
+        'course_type_id' => $courseType->id,
+        'course_level_id' => $courseLevel->id,
+        'course_category_id' => $courseCategory->id,
     ]);
 
-    $this->assertDatabaseHas('question_options', [
-        'id' => $option1->id,
-        'question_id' => $question->id,
-        'option' => 'Updated option 1',
-        'rationale' => 'Updated rationale 1',
-        'correct' => true,
+    $lesson = Lesson::create([
+        'course_id' => $course->id,
+        'name' => 'Test Lesson',
+        'position' => 1,
     ]);
 
-    $this->assertDatabaseHas('question_options', [
-        'id' => $option2->id,
-        'question_id' => $question->id,
-        'option' => 'Updated option 2',
-        'rationale' => 'Updated rationale 2',
-        'correct' => false,
+    // Create quiz with original values
+    $quiz = Quiz::create([
+        'lesson_id' => $lesson->id,
+        'name' => 'Original Quiz',
+        'description' => 'Original Description',
+        'is_published' => false,
+    ]);
+
+    // Act - update directly
+    $quiz->update([
+        'name' => 'Updated Quiz',
+        'description' => 'Updated Description',
+        'is_published' => true,
+    ]);
+
+    // Assert
+    $this->assertDatabaseHas('quizzes', [
+        'id' => $quiz->id,
+        'lesson_id' => $lesson->id,
+        'name' => 'Updated Quiz',
+        'description' => 'Updated Description',
+        'is_published' => true,
     ]);
 });
 
@@ -264,11 +174,11 @@ it('validates required fields when creating', function () {
     // Arrange
     $this->actingAs(createAdminUser());
 
-    // Test validation by trying to create a question with missing required fields
+    // Test validation by trying to create a quiz with missing required fields
     try {
-        $question = Question::create([
-            'quiz_id' => null,
-            'question_text' => '',
+        $quiz = Quiz::create([
+            'lesson_id' => null,
+            'name' => '',
         ]);
 
         // If we get here, validation failed
@@ -280,11 +190,11 @@ it('validates required fields when creating', function () {
     }
 });
 
-it('can list questions in table', function () {
+it('can list quizzes in table', function () {
     // Arrange
     $this->actingAs(createAdminUser());
 
-    // Create a lesson first (required for quiz)
+    // Create necessary related models
     $courseType = CourseType::create(['name' => 'Test Type']);
     $courseLevel = CourseLevel::create(['name' => 'Test Level']);
     $courseCategory = CourseCategory::create(['name' => 'Test Category']);
@@ -302,33 +212,31 @@ it('can list questions in table', function () {
         'position' => 1,
     ]);
 
-    // Create quiz manually
+    // Create quiz
     $quiz = Quiz::create([
         'lesson_id' => $lesson->id,
-        'name' => 'Test Quiz',
-    ]);
-
-    // Create question
-    $question = Question::create([
-        'quiz_id' => $quiz->id,
-        'question_text' => 'Test question for table?',
+        'name' => 'Test Quiz for Table',
+        'description' => 'Description for Table Test',
+        'is_published' => true,
     ]);
 
     // Assert
-    $this->assertDatabaseHas('questions', [
-        'quiz_id' => $quiz->id,
-        'question_text' => 'Test question for table?',
+    $this->assertDatabaseHas('quizzes', [
+        'lesson_id' => $lesson->id,
+        'name' => 'Test Quiz for Table',
+        'description' => 'Description for Table Test',
+        'is_published' => true,
     ]);
 
     // Skip Livewire assertions
     expect(true)->toBeTrue(); // Placeholder assertion
 });
 
-it('can filter questions by quiz', function () {
+it('can filter quizzes by lesson', function () {
     // Arrange
     $this->actingAs(createAdminUser());
 
-    // Create a lesson first (required for quiz)
+    // Create necessary related models
     $courseType = CourseType::create(['name' => 'Test Type']);
     $courseLevel = CourseLevel::create(['name' => 'Test Level']);
     $courseCategory = CourseCategory::create(['name' => 'Test Category']);
@@ -352,50 +260,47 @@ it('can filter questions by quiz', function () {
         'position' => 2,
     ]);
 
-    // Create quizzes manually
+    // Create quizzes
     $quiz1 = Quiz::create([
         'lesson_id' => $lesson1->id,
-        'name' => 'Quiz 1',
+        'name' => 'Quiz for Lesson 1',
+        'description' => 'Description for Lesson 1',
+        'is_published' => true,
     ]);
 
     $quiz2 = Quiz::create([
         'lesson_id' => $lesson2->id,
-        'name' => 'Quiz 2',
-    ]);
-
-    // Create questions
-    $question1 = Question::create([
-        'quiz_id' => $quiz1->id,
-        'question_text' => 'Question for Quiz 1',
-    ]);
-
-    $question2 = Question::create([
-        'quiz_id' => $quiz2->id,
-        'question_text' => 'Question for Quiz 2',
+        'name' => 'Quiz for Lesson 2',
+        'description' => 'Description for Lesson 2',
+        'is_published' => false,
     ]);
 
     // Assert
-    $this->assertDatabaseHas('questions', [
-        'quiz_id' => $quiz1->id,
-        'question_text' => 'Question for Quiz 1',
+    $this->assertDatabaseHas('quizzes', [
+        'lesson_id' => $lesson1->id,
+        'name' => 'Quiz for Lesson 1',
+        'description' => 'Description for Lesson 1',
+        'is_published' => true,
     ]);
 
-    $this->assertDatabaseHas('questions', [
-        'quiz_id' => $quiz2->id,
-        'question_text' => 'Question for Quiz 2',
+    $this->assertDatabaseHas('quizzes', [
+        'lesson_id' => $lesson2->id,
+        'name' => 'Quiz for Lesson 2',
+        'description' => 'Description for Lesson 2',
+        'is_published' => false,
     ]);
 
-    // Verify we can retrieve questions filtered by quiz
-    $filteredQuestions = Question::where('quiz_id', $quiz1->id)->get();
-    expect($filteredQuestions)->toHaveCount(1);
-    expect($filteredQuestions[0]->question_text)->toBe('Question for Quiz 1');
+    // Verify we can retrieve quizzes filtered by lesson
+    $filteredQuizzes = Quiz::where('lesson_id', $lesson1->id)->get();
+    expect($filteredQuizzes)->toHaveCount(1);
+    expect($filteredQuizzes[0]->name)->toBe('Quiz for Lesson 1');
 });
 
-it('can search questions by text', function () {
+it('can search quizzes by name', function () {
     // Arrange
     $this->actingAs(createAdminUser());
 
-    // Create a lesson first (required for quiz)
+    // Create necessary related models
     $courseType = CourseType::create(['name' => 'Test Type']);
     $courseLevel = CourseLevel::create(['name' => 'Test Level']);
     $courseCategory = CourseCategory::create(['name' => 'Test Category']);
@@ -413,38 +318,133 @@ it('can search questions by text', function () {
         'position' => 1,
     ]);
 
-    // Create quiz manually
+    // Create quizzes
+    $quiz1 = Quiz::create([
+        'lesson_id' => $lesson->id,
+        'name' => 'Unique Search Term Quiz',
+        'description' => 'Description for Search Test 1',
+        'is_published' => true,
+    ]);
+
+    $quiz2 = Quiz::create([
+        'lesson_id' => $lesson->id,
+        'name' => 'Different Quiz Name',
+        'description' => 'Description for Search Test 2',
+        'is_published' => false,
+    ]);
+
+    // Assert
+    $this->assertDatabaseHas('quizzes', [
+        'lesson_id' => $lesson->id,
+        'name' => 'Unique Search Term Quiz',
+        'description' => 'Description for Search Test 1',
+        'is_published' => true,
+    ]);
+
+    $this->assertDatabaseHas('quizzes', [
+        'lesson_id' => $lesson->id,
+        'name' => 'Different Quiz Name',
+        'description' => 'Description for Search Test 2',
+        'is_published' => false,
+    ]);
+
+    // Verify we can search quizzes by name
+    $searchedQuizzes = Quiz::where('name', 'like', '%Unique%')->get();
+    expect($searchedQuizzes)->toHaveCount(1);
+    expect($searchedQuizzes[0]->name)->toBe('Unique Search Term Quiz');
+});
+
+it('can test published scope', function () {
+    // Arrange
+    $this->actingAs(createAdminUser());
+
+    // Create necessary related models
+    $courseType = CourseType::create(['name' => 'Test Type']);
+    $courseLevel = CourseLevel::create(['name' => 'Test Level']);
+    $courseCategory = CourseCategory::create(['name' => 'Test Category']);
+
+    $course = Course::create([
+        'name' => 'Test Course',
+        'course_type_id' => $courseType->id,
+        'course_level_id' => $courseLevel->id,
+        'course_category_id' => $courseCategory->id,
+    ]);
+
+    $lesson = Lesson::create([
+        'course_id' => $course->id,
+        'name' => 'Test Lesson',
+        'position' => 1,
+    ]);
+
+    // Create quizzes with different published states
+    $publishedQuiz = Quiz::create([
+        'lesson_id' => $lesson->id,
+        'name' => 'Published Quiz',
+        'description' => 'This quiz is published',
+        'is_published' => true,
+    ]);
+
+    $unpublishedQuiz = Quiz::create([
+        'lesson_id' => $lesson->id,
+        'name' => 'Unpublished Quiz',
+        'description' => 'This quiz is not published',
+        'is_published' => false,
+    ]);
+
+    // Test the published scope
+    $publishedQuizzes = Quiz::published()->get();
+
+    // Assert
+    expect($publishedQuizzes)->toHaveCount(1);
+    expect($publishedQuizzes[0]->name)->toBe('Published Quiz');
+    expect($publishedQuizzes[0]->is_published)->toBeTrue();
+});
+
+it('can test quiz-question relationship', function () {
+    // Arrange
+    $this->actingAs(createAdminUser());
+
+    // Create necessary related models
+    $courseType = CourseType::create(['name' => 'Test Type']);
+    $courseLevel = CourseLevel::create(['name' => 'Test Level']);
+    $courseCategory = CourseCategory::create(['name' => 'Test Category']);
+
+    $course = Course::create([
+        'name' => 'Test Course',
+        'course_type_id' => $courseType->id,
+        'course_level_id' => $courseLevel->id,
+        'course_category_id' => $courseCategory->id,
+    ]);
+
+    $lesson = Lesson::create([
+        'course_id' => $course->id,
+        'name' => 'Test Lesson',
+        'position' => 1,
+    ]);
+
+    // Create quiz
     $quiz = Quiz::create([
         'lesson_id' => $lesson->id,
         'name' => 'Test Quiz',
+        'description' => 'Description for Relationship Test',
+        'is_published' => true,
     ]);
 
-    // Create questions
+    // Create questions for the quiz
     $question1 = Question::create([
         'quiz_id' => $quiz->id,
-        'question_text' => 'Unique search term',
+        'question_text' => 'Question 1',
     ]);
 
     $question2 = Question::create([
         'quiz_id' => $quiz->id,
-        'question_text' => 'Different content',
+        'question_text' => 'Question 2',
     ]);
 
     // Assert
-    $this->assertDatabaseHas('questions', [
-        'quiz_id' => $quiz->id,
-        'question_text' => 'Unique search term',
-    ]);
-
-    $this->assertDatabaseHas('questions', [
-        'quiz_id' => $quiz->id,
-        'question_text' => 'Different content',
-    ]);
-
-    // Verify we can search questions by text
-    $searchedQuestions = Question::where('question_text', 'like', '%Unique%')->get();
-    expect($searchedQuestions)->toHaveCount(1);
-    expect($searchedQuestions[0]->question_text)->toBe('Unique search term');
+    expect($quiz->questions)->toHaveCount(2);
+    expect($quiz->questions[0]->question_text)->toBe('Question 1');
+    expect($quiz->questions[1]->question_text)->toBe('Question 2');
 });
 
 it('prevents deletion of question with related test answers', function () {
@@ -511,7 +511,7 @@ it('prevents deletion of question with related test answers', function () {
         'question_id' => $question->id,
     ]);
 
-    // Simulate the deletion check in QuestionResource
+    // Simulate the deletion check in QuizResource
     $canDelete = $question->testAnswers()->count() === 0;
 
     // Assert that the question cannot be deleted
@@ -559,7 +559,7 @@ it('allows deletion of question without related test answers', function () {
         'question_id' => $question->id,
     ]);
 
-    // Simulate the deletion check in QuestionResource
+    // Simulate the deletion check in QuizResource
     $canDelete = $question->testAnswers()->count() === 0;
 
     // Assert that the question can be deleted

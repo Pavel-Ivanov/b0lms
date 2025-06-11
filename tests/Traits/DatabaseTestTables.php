@@ -119,6 +119,8 @@ trait DatabaseTestTables
             $table->id();
             $table->foreignId('lesson_id')->constrained()->cascadeOnDelete();
             $table->string('name');
+            $table->text('description')->nullable();
+            $table->boolean('is_published')->default(false);
             $table->timestamps();
         });
 
