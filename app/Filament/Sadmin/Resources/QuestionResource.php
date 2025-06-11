@@ -40,19 +40,6 @@ class QuestionResource extends Resource
                             ->relationship('quiz', 'name'),
                     ])
             );
-
-/*        ->schema([
-                Forms\Components\Select::make('course_id')
-                    ->relationship('course', 'name')
-                    ->required(),
-                Forms\Components\Textarea::make('question_text')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('hint')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('more_info_link')
-                    ->maxLength(255),
-            ]);*/
     }
 
     public static function table(Table $table): Table
@@ -61,10 +48,12 @@ class QuestionResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('question_text')
                     ->label('Текст вопроса')
+                    ->limit(50)
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('quiz.name')
                     ->label('Тест')
+                    ->limit(50)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('more_info_link')
                     ->label('Ссылка на доп. инф.')
@@ -91,9 +80,9 @@ class QuestionResource extends Resource
                 ->hiddenLabel(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+/*                Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                ]),*/
             ]);
     }
 
@@ -121,6 +110,7 @@ class QuestionResource extends Resource
                 ->required()
                 ->columnSpanFull(),
             Forms\Components\Repeater::make('questionOptions')
+                ->label('Ответы')
                 ->required()
                 ->relationship()
                 ->columnSpanFull()
@@ -140,7 +130,36 @@ class QuestionResource extends Resource
                 ->addActionLabel('Добавить ответ')
                 ->reorderable(true)
                 ->reorderableWithButtons()
-                ->cloneable(),
+                ->cloneable()
+                ->deleteAction(function (\Filament\Forms\Components\Actions\Action $action) {
+                    return $action
+                        ->action(function (array $arguments, \Filament\Forms\Components\Repeater $component) {
+                            $item = $arguments['item'];
+                            $record = null;
+
+                            // Get the record from the database if it exists
+                            if (isset($component->getItemState($item)['id'])) {
+                                $recordId = $component->getItemState($item)['id'];
+                                $record = \App\Models\QuestionOption::find($recordId);
+                            }
+
+                            // Check if the record has related TestAnswer records
+                            if ($record && $record->testAnswers()->count() > 0) {
+                                \Filament\Notifications\Notification::make()
+                                    ->danger()
+                                    ->title('Невозможно удалить ответ')
+                                    ->body('Этот ответ используется в ответах тестов и не может быть удален.')
+                                    ->send();
+
+                                return;
+                            }
+
+                            // If no related records, proceed with deletion
+                            $state = $component->getState();
+                            unset($state[$item]);
+                            $component->state($state);
+                        });
+                }),
             Forms\Components\Textarea::make('hint')
                 ->label('Подсказка')
                 ->columnSpanFull(),
