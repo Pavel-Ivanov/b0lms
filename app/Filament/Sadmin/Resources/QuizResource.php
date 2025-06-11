@@ -56,7 +56,6 @@ class QuizResource extends Resource
                             ->schema([
                                 Forms\Components\Repeater::make('questions')
                                     ->hiddenLabel()
-//                                    ->label('Контрольные вопросы')
                                     ->relationship('questions')
                                     ->schema([
                                         Forms\Components\Textarea::make('question_text')
@@ -85,12 +84,39 @@ class QuizResource extends Resource
                                             })
                                             ->columns()
                                             ->addActionLabel('Добавить ответ')
-                                            ->reorderable(true)
-                                            ->reorderableWithButtons()
-                                            ->cloneable()
+//                                            ->reorderable(true)
+//                                            ->reorderableWithButtons()
+//                                            ->cloneable()
                                             ->collapsible()
-//                                            ->collapsed()
-                                        ,
+                                            ->collapsed()
+                                            ->deleteAction(function (\Filament\Forms\Components\Actions\Action $action) {
+                                                return $action
+                                                    ->action(function (array $arguments, \Filament\Forms\Components\Repeater $component) {
+                                                        $item = $arguments['item'];
+                                                        $record = null;
+
+                                                        // Get the record from the database if it exists
+                                                        if (isset($component->getItemState($item)['id'])) {
+                                                            $recordId = $component->getItemState($item)['id'];
+                                                            $record = \App\Models\QuestionOption::find($recordId);
+                                                        }
+
+                                                        // Check if the record has related TestAnswer records
+                                                        if ($record && $record->testAnswers()->count() > 0) {
+                                                            \Filament\Notifications\Notification::make()
+                                                                ->danger()
+                                                                ->title('Невозможно удалить ответ')
+                                                                ->body('Этот ответ используется в ответах тестов и не может быть удален.')
+                                                                ->send();
+                                                            return;
+                                                        }
+
+                                                        // If no related records, proceed with deletion
+                                                        $state = $component->getState();
+                                                        unset($state[$item]);
+                                                        $component->state($state);
+                                                    });
+                                            }),
                                         Forms\Components\Textarea::make('hint')
                                             ->label('Подсказка')
                                             ->columnSpanFull(),
@@ -107,9 +133,36 @@ class QuizResource extends Resource
                                     ->columns()
                                     ->collapsible()
                                     ->collapsed()
-                                    //                                ->addable(false)
                                     ->addActionLabel('Добавить вопрос')
-                                    ->defaultItems(0),
+                                    ->defaultItems(0)
+                                    ->deleteAction(function (\Filament\Forms\Components\Actions\Action $action) {
+                                        return $action
+                                            ->action(function (array $arguments, \Filament\Forms\Components\Repeater $component) {
+                                                $item = $arguments['item'];
+                                                $record = null;
+
+                                                // Get the record from the database if it exists
+                                                if (isset($component->getItemState($item)['id'])) {
+                                                    $recordId = $component->getItemState($item)['id'];
+                                                    $record = \App\Models\Question::find($recordId);
+                                                }
+
+                                                // Check if the record has related TestAnswer records
+                                                if ($record && $record->testAnswers()->count() > 0) {
+                                                    \Filament\Notifications\Notification::make()
+                                                        ->danger()
+                                                        ->title('Невозможно удалить вопрос')
+                                                        ->body('Этот вопрос используется в ответах тестов и не может быть удален.')
+                                                        ->send();
+                                                    return;
+                                                }
+
+                                                // If no related records, proceed with deletion
+                                                $state = $component->getState();
+                                                unset($state[$item]);
+                                                $component->state($state);
+                                            });
+                                    }),
                             ]),
                     ])
                     ->persistTab()
