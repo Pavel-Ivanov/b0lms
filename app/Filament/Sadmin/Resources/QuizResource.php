@@ -81,19 +81,16 @@ class QuizResource extends Resource
                                                     ->label('Правильный ответ'),
                                             ])
                                             ->itemLabel(function (array $state): ?string {
-                                                if (empty($state['option'])) {
-                                                    return '';
-                                                }
-                                                return $state['option'];
+                                                return $state['option'] ?? '';
                                             })
-
                                             ->columns()
                                             ->addActionLabel('Добавить ответ')
                                             ->reorderable(true)
                                             ->reorderableWithButtons()
                                             ->cloneable()
                                             ->collapsible()
-                                            ->collapsed(),
+//                                            ->collapsed()
+                                        ,
                                         Forms\Components\Textarea::make('hint')
                                             ->label('Подсказка')
                                             ->columnSpanFull(),
@@ -113,7 +110,6 @@ class QuizResource extends Resource
                                     //                                ->addable(false)
                                     ->addActionLabel('Добавить вопрос')
                                     ->defaultItems(0),
-
                             ]),
                     ])
                     ->persistTab()
@@ -127,10 +123,12 @@ class QuizResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('lesson.name')
-                    ->label('Урок')
+                    ->label('Название Урока')
+                    ->limit(50)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Название')
+                    ->label('Название Теста')
+                    ->limit(50)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('questions_count')
                     ->label('Кол-во вопросов')
