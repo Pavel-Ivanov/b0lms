@@ -57,9 +57,11 @@ class QuestionOptionResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('question.question_text')
                     ->label('Вопрос')
+                    ->limit(50)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('option')
                     ->label('Ответ')
+                    ->limit(50)
                     ->searchable(),
                 Tables\Columns\IconColumn::make('correct')
                     ->label('Правильный')

@@ -12,6 +12,15 @@ class EditQuestionOption extends EditRecord
 {
     protected static string $resource = QuestionOptionResource::class;
 
+    /**
+     * Defines the header actions for the resource, enabling a delete action
+     * with appropriate notifications based on the related test answers count.
+     *
+     * - If the record is associated with test answers, a danger notification
+     *   will be shown, and the action will not proceed.
+     * - If no associated test answers exist, the record will be deleted,
+     *   and a success notification will be shown.
+     */
     protected function getHeaderActions(): array
     {
         return [
