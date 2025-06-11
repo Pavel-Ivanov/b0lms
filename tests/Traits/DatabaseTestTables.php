@@ -38,6 +38,7 @@ trait DatabaseTestTables
             $table->foreignId('company_department_id')->nullable()->constrained();
             $table->foreignId('company_position_id')->nullable()->constrained();
             $table->string('password');
+            $table->string('role')->nullable(); // Add role column needed by User model
             $table->rememberToken();
             $table->timestamps();
         });
@@ -126,6 +127,8 @@ trait DatabaseTestTables
             $table->id();
             $table->foreignId('quiz_id')->constrained()->cascadeOnDelete();
             $table->text('question_text');
+            $table->text('hint')->nullable();
+            $table->string('more_info_link')->nullable();
             $table->timestamps();
         });
 
@@ -134,6 +137,7 @@ trait DatabaseTestTables
             $table->id();
             $table->foreignId('question_id')->constrained()->cascadeOnDelete();
             $table->text('option');
+            $table->text('rationale')->nullable();
             $table->boolean('correct')->default(false);
             $table->timestamps();
         });
