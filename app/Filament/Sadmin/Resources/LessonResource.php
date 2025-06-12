@@ -68,7 +68,7 @@ class LessonResource extends Resource
                             ]),
                         Tabs\Tab::make('Содержание урока')
                             ->schema([
-                                TiptapEditor::make('lesson_content')
+/*                                TiptapEditor::make('lesson_content')
                                     ->label('Содержание урока')
                                     ->profile('default')
                                     ->disk('public')
@@ -77,14 +77,14 @@ class LessonResource extends Resource
                                     ->maxSize('10240') // 10MB limit
                                     ->output(TiptapOutput::Html)
                                     ->maxContentWidth('5xl')
-                                    ->required(),
-/*                                TinyEditor::make('lesson_content')
+                                    ->required(),*/
+                                TinyEditor::make('lesson_content')
                                     ->fileAttachmentsDisk('public')
                                     ->fileAttachmentsVisibility('public')
                                     ->fileAttachmentsDirectory('lesson_images')
                                     ->profile('custom')
                                     ->columnSpan('full')
-                                    ->required(),*/
+                                    ->required(),
 /*                                Forms\Components\RichEditor::make('lesson_content')
                                     ->label('Содержание урока')
                                     ->fileAttachmentsDisk('public')
