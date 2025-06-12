@@ -23,7 +23,7 @@
             </p>
         </div>
 
-        <div class="mt-2 mx-auto max-w-7xl border-b pb-4">
+        <div class="mt-2 mx-auto max-w-7xl border-b pb-4 prose">
             {!! $lesson->lesson_content !!}
         </div>
 
