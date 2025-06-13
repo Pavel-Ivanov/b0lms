@@ -9,7 +9,6 @@ use App\Models\Quiz;
 use App\Models\Test;
 use App\Models\TestAnswer;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -62,14 +61,17 @@ class QuizForm extends Component implements HasForms
             $steps[] = Step::make('Вопрос ' . $i)
                 ->schema([
                     Radio::make($question['id'])
-                        ->label($question['question_text'])
+                        ->label(fn() => new HtmlString(
+                            '<span class="font-bold">' . $question['question_text'] . '</span>' .
+                            (!empty($question['hint']) ? '<br><span class="text-gray-500">Подсказка: ' . $question['hint'] . '</span>' : '')
+                        ))
                         ->options(
                             collect($question['question_options'] ?? [])
-                                ->mapWithKeys(fn ($answer) => [$answer['id'] => $answer['option']])
+                                ->mapWithKeys(fn($answer) => [$answer['id'] => $answer['option']])
                                 ->toArray()
                         )
-                        ->required()
-                ]);
+                        ->required(),
+            ]);
             $i++;
         }
 
@@ -90,6 +92,7 @@ class QuizForm extends Component implements HasForms
 
     public function submit(): void
     {
+//        dd($this->data);
         $result = 0;
 
         $test = Test::create([
@@ -102,8 +105,10 @@ class QuizForm extends Component implements HasForms
         ]);
 
         foreach ($this->data as $questionId => $userAnswer) {
-            $correctAnswer = $this->correctAnswers[$questionId] ?? null;
-            $isCorrect = ($correctAnswer !== null && $userAnswer == $correctAnswer) ? 1 : 0;
+            $userAnswer = (int) $userAnswer;
+            $correctAnswer = ($this->correctAnswers[$questionId] ?? null);
+//            dump($userAnswer, $correctAnswer);
+            $isCorrect = $userAnswer === $correctAnswer ? 1 : 0;
             $result += $isCorrect;
 
             TestAnswer::create([
