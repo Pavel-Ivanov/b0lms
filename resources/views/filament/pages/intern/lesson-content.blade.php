@@ -15,10 +15,10 @@
         </div>
 
         <div class="border-b border-gray-200 pb-4">
-            <h1 class="text-xl font-semibold text-gray-900">
+            <h2 class="text-xl font-semibold text-gray-900">
                 {{ $lesson->name }}
-            </h1>
-            <p class="mt-2 max-w-4xl text-base text-gray-500">
+            </h2>
+            <p class="mt-2 max-w-4xl text-sm text-gray-500">
                 {{ $lesson->announcement }}
             </p>
         </div>

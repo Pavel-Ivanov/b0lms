@@ -47,9 +47,11 @@
                 {{ $item['stepModel']->name }}
                 </p>
             </div>
+{{--
             <p class="mt-1 line-clamp-2 text-xs text-gray-600">
                 {{ $item['stepModel']->announcement }}
             </p>
+--}}
         </a>
     </div>
     <div class="flex-none ml-auto">
