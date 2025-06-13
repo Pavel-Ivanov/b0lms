@@ -88,7 +88,7 @@ class QuizResource extends Resource
 //                                            ->reorderableWithButtons()
 //                                            ->cloneable()
                                             ->collapsible()
-                                            ->collapsed()
+//                                            ->collapsed()
                                             ->deleteAction(function (\Filament\Forms\Components\Actions\Action $action) {
                                                 return $action
                                                     ->action(function (array $arguments, \Filament\Forms\Components\Repeater $component) {
