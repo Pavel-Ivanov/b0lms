@@ -4,7 +4,6 @@
             {{ $this->form }}
         </form>
     @else
-{{--@dump($latestTest)--}}
         <dl class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
                 <dt class="truncate text-sm font-medium text-gray-500">Правильные ответы</dt>

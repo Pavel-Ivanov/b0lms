@@ -92,7 +92,6 @@ class QuizForm extends Component implements HasForms
 
     public function submit(): void
     {
-//        dd($this->data);
         $result = 0;
 
         $test = Test::create([
@@ -103,11 +102,11 @@ class QuizForm extends Component implements HasForms
             'enrollment_step_id' => $this->activeStep->id,
             'quiz_id'    => $this->quiz->id,
         ]);
+        $this->latestTest = $test;
 
         foreach ($this->data as $questionId => $userAnswer) {
             $userAnswer = (int) $userAnswer;
             $correctAnswer = ($this->correctAnswers[$questionId] ?? null);
-//            dump($userAnswer, $correctAnswer);
             $isCorrect = $userAnswer === $correctAnswer ? 1 : 0;
             $result += $isCorrect;
 
