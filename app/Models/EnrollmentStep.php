@@ -17,12 +17,14 @@ class EnrollmentStep extends Model
         'stepable_type',
         'position',
         'is_completed',
+        'is_enabled',
         'started_at',
         'completed_at'
     ];
 
     protected $casts = [
         'is_completed' => 'boolean',
+        'is_enabled' => 'boolean',
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
     ];
@@ -84,4 +86,32 @@ class EnrollmentStep extends Model
 
         return $this;
     }
+
+    public function isEnabled(): bool
+    {
+        return $this->is_enabled;
+    }
+
+    public function enable(): self
+    {
+        if ($this->is_enabled) {
+            return $this;
+        }
+
+        $this->is_enabled = true;
+
+        return $this;
+    }
+
+    public function disable(): self
+    {
+        if (!$this->is_enabled) {
+            return $this;
+        }
+
+        $this->is_enabled = false;
+
+        return $this;
+    }
+
 }
