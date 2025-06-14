@@ -149,9 +149,9 @@ class EnrollmentView extends Page
             $firstEnrollmentStep = $this->steps->where('is_enabled', true)->first();
             if ($firstEnrollmentStep) {
                 $this->loadStepContent($firstEnrollmentStep->id);
+                $this->activeStepId = $firstEnrollmentStep->id;
+                $this->activeStep = $firstEnrollmentStep;
             }
-            $this->activeStepId = $firstEnrollmentStep->id;
-            $this->activeStep = $firstEnrollmentStep;
         }
     }
     /**

@@ -46,6 +46,11 @@ class Lesson extends Model implements HasMedia
         return $this->hasMany(Quiz::class);
     }
 
+    public function publishedQuizzes(): HasMany
+    {
+        return $this->quizzes()->published();
+    }
+
     public function questions(): HasManyThrough
     {
         return $this->hasManyThrough(Question::class, Quiz::class);

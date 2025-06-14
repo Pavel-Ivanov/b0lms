@@ -123,6 +123,7 @@ class Enrollment extends Model
                 'stepable_type' => $step['stepable_type'],
                 'position' => $index + 1,
                 'is_completed' => false,
+                'is_enabled' => $index === 0, // Enable only the first step
             ];
         }
 

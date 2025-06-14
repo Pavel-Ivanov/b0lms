@@ -85,8 +85,11 @@ class Course extends Model implements HasMedia
 
     public function getSteps(): array
     {
-        // Получаем все уроки курса вместе с квизами
-        $lessons = $this->lessons()->with('quizzes')->get();
+        // Получаем только опубликованные уроки курса вместе с квизами
+        $lessons = $this->publishedLessons()->with('publishedQuizzes')->get();
+/*        $lessons = $this->lessons()->where('is_published', true)->with(['quizzes' => function($query) {
+            $query->where('is_published', true);
+        }])->get();*/
 
         // Создаём последовательность шагов
         $steps = [];
@@ -97,12 +100,14 @@ class Course extends Model implements HasMedia
                 'stepable_type' => Lesson::class,
             ];
 
-            // Добавляем связанные с уроком квизы
-            foreach ($lesson->quizzes as $quiz) {
-                $steps[] = [
-                    'stepable_id' => $quiz->id,
-                    'stepable_type' => Quiz::class,
-                ];
+            // Добавляем связанные с уроком квизы, только если они опубликованы
+            foreach ($lesson->publishedQuizzes as $quiz) {
+//                if ($quiz->is_published) {
+                    $steps[] = [
+                        'stepable_id' => $quiz->id,
+                        'stepable_type' => Quiz::class,
+                    ];
+//                }
             }
         }
 
