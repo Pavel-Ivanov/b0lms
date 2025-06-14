@@ -123,10 +123,27 @@ class QuizForm extends Component implements HasForms
 
         $this->activeStep->update(['is_completed' => true]);
 
+        // Находим следующий шаг и делаем его доступным
+        $nextStep = $this->enrollment->steps()
+            ->where('position', '>', $this->activeStep->position)
+            ->orderBy('position')
+            ->first();
+
+        if ($nextStep) {
+            $nextStep->update(['is_enabled' => true]);
+        }
+
         $count = count(array_diff($this->correctAnswers, $this->data));
         $this->completed = true;
         $this->state = $count === 0 ? 'success' : 'failure';
         $this->message = $count === 0 ? 'Вы ответили правильно на все вопросы!' : 'У Вас ' . $count . ' неправильных ответов!';
+
+        // Отправляем события для обновления интерфейса
+        $this->dispatch('enrollment-step-completed');
+        $this->dispatch('enrollment-navigation-update');
+
+        // Обновляем текущий компонент
+        $this->render();
 
         // Если хотите вернуться на страницу результатов, можно использовать Livewire's $this->redirect(route('intern.enrollment.results', ['enrollment' => $this->enrollment->id]))'
         // Если хотите вернуться на предыдущую страницу, можно использовать Laravel's redirect()->back() или Livewire's $this->redirect()->back()

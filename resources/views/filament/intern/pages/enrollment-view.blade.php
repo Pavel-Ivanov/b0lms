@@ -36,4 +36,16 @@
         </div>
     </div>
 
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('enrollment-step-completed', () => {
+                window.location.reload();
+            });
+
+            Livewire.on('enrollment-navigation-update', () => {
+                window.location.reload();
+            });
+        });
+    </script>
+
 </x-filament-panels::page>
