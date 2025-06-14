@@ -124,6 +124,17 @@ class EnrollmentView extends Page
     {
         if ($stepId) {
             $enrollmentStep = EnrollmentStep::findOrFail($stepId);
+
+            // Проверка доступности шага
+            if (!$enrollmentStep->isEnabled()) {
+                // Если шаг недоступен, перенаправляем на первый доступный шаг
+                $firstEnabledStep = $this->steps->where('is_enabled', true)->sortBy('position')->first();
+                if ($firstEnabledStep) {
+                    $this->loadStepContent($firstEnabledStep->id);
+                    return;
+                }
+            }
+
             $this->activeLesson = null;
             $this->activeQuiz = null;
 
@@ -135,7 +146,7 @@ class EnrollmentView extends Page
             $this->activeStepId = $stepId;
             $this->activeStep = $enrollmentStep;
         } else {
-            $firstEnrollmentStep = $this->steps->first();
+            $firstEnrollmentStep = $this->steps->where('is_enabled', true)->first();
             if ($firstEnrollmentStep) {
                 $this->loadStepContent($firstEnrollmentStep->id);
             }
@@ -143,7 +154,6 @@ class EnrollmentView extends Page
             $this->activeStep = $firstEnrollmentStep;
         }
     }
-
     /**
      * Generates an array of navigation items for the enrollment steps.
      *
@@ -251,10 +261,19 @@ class EnrollmentView extends Page
         $activeStep = EnrollmentStep::findOrFail($this->activeStepId);
         $activeStep->update(['is_completed' => true]);
 
+        // Находим следующий шаг и делаем его доступным
+        $nextStep = $this->enrollment->steps()
+            ->where('position', '>', $activeStep->position)
+            ->orderBy('position')
+            ->first();
+
+        if ($nextStep) {
+            $nextStep->update(['is_enabled' => true]);
+        }
+
         $this->dispatch('enrollment-step-completed');
         $this->refresh();
     }
-
     public function refresh()
     {
         $this->steps = $this->enrollment->steps()->get();

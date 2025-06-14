@@ -67,15 +67,15 @@ class EnrollmentNavigation extends Component
                 'step' => $enrollmentStep,
                 'stepModel' => $enrollmentStep->stepableModel(),
                 'label' => $label,
-                'url' => $url,
+                'url' => $enrollmentStep->isEnabled() ? $url : '#', // Используем is_enabled для определения URL
                 'template' => $template,
                 'active' => $this->activeStepId === $enrollmentStep->id,
                 'completed' => $enrollmentStep->isCompleted(),
+                'accessible' => $enrollmentStep->isEnabled(), // Добавляем флаг доступности
                 'results' => $results,
             ];
         })->toArray();
     }
-
     public function render(): View
     {
         return view('filament.intern.components.enrollment-navigation', [
