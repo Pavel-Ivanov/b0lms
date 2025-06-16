@@ -51,6 +51,20 @@ class QuizResource extends Resource
                                     ->columnSpanFull(),
                                 Forms\Components\Checkbox::make('is_published')
                                     ->label('Опубликован'),
+                                Forms\Components\TextInput::make('passing_percentage')
+                                    ->label('Минимальный процент для прохождения')
+                                    ->numeric()
+                                    ->default(80)
+                                    ->minValue(1)
+                                    ->maxValue(100)
+                                    ->suffix('%')
+                                    ->helperText('Минимальный процент правильных ответов для успешного прохождения теста'),
+                                Forms\Components\TextInput::make('max_attempts')
+                                    ->label('Максимальное количество попыток')
+                                    ->numeric()
+                                    ->default(3)
+                                    ->minValue(1)
+                                    ->helperText('Максимальное количество попыток прохождения теста'),
                             ]),
                         Tabs\Tab::make('Вопросы')
                             ->schema([
@@ -186,6 +200,11 @@ class QuizResource extends Resource
                 Tables\Columns\TextColumn::make('questions_count')
                     ->label('Кол-во вопросов')
                     ->counts('questions'),
+                Tables\Columns\TextColumn::make('passing_percentage')
+                    ->label('% для прохождения')
+                    ->suffix('%'),
+                Tables\Columns\TextColumn::make('max_attempts')
+                    ->label('Макс. попыток'),
                 Tables\Columns\IconColumn::make('is_published')
                     ->label('Опубликован')
                     ->boolean(),

@@ -9,17 +9,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Quiz extends Model
 {
+    protected $attributes = [
+        'passing_percentage' => 80,
+        'max_attempts' => 3,
+    ];
     protected $fillable = [
         'lesson_id',
         'name',
         'description',
         'is_published',
+        'passing_percentage',
+        'max_attempts',
     ];
 
     protected function casts(): array
     {
         return [
             'is_published' => 'boolean',
+            'passing_percentage' => 'integer',
+            'max_attempts' => 'integer',
         ];
     }
 
