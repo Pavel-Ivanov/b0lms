@@ -16,6 +16,20 @@ class Test extends Model
         'user_id',
         'enrollment_step_id',
         'quiz_id',
+        'status',
+        'current_attempt',
+        'attempt_number',
+        'passed',
+        'started_at',
+        'completed_at',
+        'answers',
+    ];
+
+    protected $casts = [
+        'passed' => 'boolean',
+        'answers' => 'array',
+        'started_at' => 'datetime',
+        'completed_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

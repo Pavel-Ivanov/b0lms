@@ -14,7 +14,7 @@
         </div>
 
         <div class="mt-2 mx-auto max-w-7xl border-b pb-4">
-            <livewire:quiz-form :quiz="$quiz" :enrollment="$enrollment" :activeStep="$activeStep"/>
+            <livewire:test-manager :quiz="$quiz" :enrollment="$enrollment" :enrollmentStep="$activeStep"/>
         </div>
     @endif
 </div>

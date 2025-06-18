@@ -101,6 +101,7 @@ class QuizForm extends Component implements HasForms
             'user_id'    => auth()->id(),
             'enrollment_step_id' => $this->activeStep->id,
             'quiz_id'    => $this->quiz->id,
+            'status'     => 'pending',
         ]);
         $this->latestTest = $test;
 

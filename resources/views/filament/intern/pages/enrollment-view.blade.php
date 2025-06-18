@@ -39,11 +39,15 @@
     <script>
         document.addEventListener('livewire:initialized', () => {
             Livewire.on('enrollment-step-completed', () => {
-                window.location.reload();
+                // Instead of reloading the page, refresh the Filament component
+                // This preserves the TestManager state while updating the navigation
+                Livewire.dispatch('refresh-enrollment-view');
             });
 
             Livewire.on('enrollment-navigation-update', () => {
-                window.location.reload();
+                // Instead of reloading the page, refresh the Filament component
+                // This preserves the TestManager state while updating the navigation
+                Livewire.dispatch('refresh-enrollment-view');
             });
         });
     </script>

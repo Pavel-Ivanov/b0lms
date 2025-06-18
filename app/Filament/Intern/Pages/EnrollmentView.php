@@ -30,6 +30,13 @@ class EnrollmentView extends Page
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $slug = 'enrollments';
 
+    protected function getListeners(): array
+    {
+        return [
+            'refresh-enrollment-view' => 'refresh',
+        ];
+    }
+
     public Enrollment $enrollment;
 
     /**
