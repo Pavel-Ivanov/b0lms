@@ -61,6 +61,8 @@ class InternPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->viteTheme('resources/css/filament/intern/theme.css')
+            ;
     }
 }

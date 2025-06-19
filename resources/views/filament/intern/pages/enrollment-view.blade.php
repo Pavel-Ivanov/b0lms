@@ -1,9 +1,8 @@
 <x-filament-panels::page>
 
     <div class="mx-auto w-full max-w-7xl grow flex flex-col-reverse lg:flex-row xl:px-2">
-        <!-- Main content -->
-        <div class="flex-1 xl:flex">
-            <div class="px-4 py-6 sm:px-6 lg:pl-8 xl:w-64 xl:shrink-0 xl:pl-6">
+        <div class="flex-1 flex flex-col">
+            <div class="px-4 py-6 sm:px-6 lg:pl-8 xl:pl-6">
                 @if ($activeLesson)
                     @include('filament.pages.intern.lesson-content',
                             ['lesson' => $activeLesson,
@@ -24,13 +23,10 @@
                     </div>
                 @endif
             </div>
-            <!-- Main content bottom -->
-            <div class="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">
-
+            <div class="px-4 py-6 sm:px-6 lg:pl-8 xl:pl-6">
             </div>
         </div>
-        <!-- Right sidebar -->
-        <div class="shrink-0 px-4 py-6 sm:px-6 lg:max-w-xs lg:pr-8 xl:pr-6 lg:order-first break-words">
+        <div class="shrink-0 px-4 py-6 sm:px-6 lg:max-w-xs lg:pr-8 xl:pr-6 break-words">
             @include('filament.pages.intern.enrollment-progress')
             <x-filament.intern.enrollment-navigation :enrollment="$enrollment" :active-step-id="$activeStep?->id" />
         </div>
@@ -39,14 +35,10 @@
     <script>
         document.addEventListener('livewire:initialized', () => {
             Livewire.on('enrollment-step-completed', () => {
-                // Instead of reloading the page, refresh the Filament component
-                // This preserves the TestManager state while updating the navigation
                 Livewire.dispatch('refresh-enrollment-view');
             });
 
             Livewire.on('enrollment-navigation-update', () => {
-                // Instead of reloading the page, refresh the Filament component
-                // This preserves the TestManager state while updating the navigation
                 Livewire.dispatch('refresh-enrollment-view');
             });
         });
