@@ -71,7 +71,7 @@ class SadminPanelProvider extends PanelProvider
                     ->usingPolingInterval('60s')
                     ->timeout(120),
             ])
-            ->viteTheme('resources/css/filament/sadmin/theme.css')
+//            ->viteTheme('resources/css/filament/sadmin/theme.css')
 //            ->viteTheme('"C:\Herd\b0lms\resources\css\filament\sadmin\theme.css"')
             ;
     }
