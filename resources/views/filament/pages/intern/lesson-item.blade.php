@@ -4,7 +4,7 @@
     'opacity-50 cursor-not-allowed' => !$item['accessible']
 ])>
     <div class="flex-none">
-        <x-heroicon-o-document-text class="h-6 w-6 text-gray-600" />
+        <x-heroicon-o-book-open class="h-6 w-6 text-gray-600" />
     </div>
     <div class="flex-auto">
         @if($item['accessible'])
@@ -34,7 +34,7 @@
         @else
             <x-heroicon-o-check-circle
                 @class(['w-6 h-6',
-                     'text-danger-600' => $item['completed'],
+                     'text-green-600' => $item['completed'],
                      'text-gray-400' =>!$item['completed'],
                 ])
             />
