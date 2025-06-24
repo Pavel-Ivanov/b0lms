@@ -2,7 +2,10 @@
 
 namespace App\Filament\Intern\Widgets;
 
+use App\Filament\Intern\Resources\TestResource;
 use App\Models\Test;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Infolists\Infolist;
 use Filament\Tables;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -38,16 +41,16 @@ class MyTestsResults extends BaseWidget
                             return  $record->result. '/' . $record->questions_count. ' (время: ' . (int)($record->time_spent / 60) . ':' . gmdate('s', $record->time_spent) .' минут)';
                         }),
                 ])
-/*            ->actions([
+            ->actions([
                 ViewAction::make('viewDetails')
-                    ->label('Подробнее')
-                    ->modalHeading('Подробная информация')
+                    ->label('Результаты')
+                    ->modalHeading('Результаты теста')
                     ->modalWidth('xl')
                     ->infolist(function (\Filament\Tables\Contracts\HasTable $livewire, \App\Models\Test $record): Infolist {
                         return TestResource::infolist(Infolist::make()) // Вызываем статический метод infolist()
                         ->record($record);
                     }),
-                ])*/
+                ])
             ->paginated(10);
     }
 }

@@ -86,29 +86,48 @@ class TestResource extends Resource
                                 ->hiddenLabel()
                                 ->columnSpanFull()
                                 ->weight(FontWeight::Bold),
-                            RepeatableEntry::make('question.questionOptions')
-                                ->inlineLabel()
-                                ->label('Ответы')
-                                ->contained(false)
-                                ->schema([
-                                    TextEntry::make('option')
-                                        ->html()
-                                        ->hiddenLabel()
-                                        ->weight(fn (QuestionOption $record) => $record->correct ? FontWeight::Bold : null)
+                            TextEntry::make('option_id')
+                                ->label('Ответ')
+                                ->html()
+                                ->formatStateUsing(function ($state, $record) {
+                                    // Проверяем, есть ли ответ пользователя
+                                    if (!$state) {
+                                        return new HtmlString('<span class="text-gray-500">Нет ответа</span>');
+                                    }
 
-                                        ->formatStateUsing(function (QuestionOption $recordOption) {
-                                            // нам нужна запись Test, чтобы получить ответы Пользователя на этот вопрос
-                                            $answers = static::record;
-dump($answers);
-                                            $answer = $answers->firstWhere(function (TestAnswer $value) use ($recordOption) {
-                                                return $value->question_id === $recordOption->question_id;
-                                            });
+                                    // Получаем выбранный вариант ответа
+                                    $option = QuestionOption::find($state);
+                                    if (!$option) {
+                                        return new HtmlString('<span class="text-gray-500">Ответ не найден</span>');
+                                    }
 
-                                            return $recordOption->option . ' ' .
-                                                ($recordOption->correct ? new HtmlString('<span class="italic">(correct answer)</span>') : null) . ' ' .
-                                                ($answer->option_id == $recordOption->id ? new HtmlString('<span class="italic">(your answer)</span>') : null);
-                                        })
-                                ])
+                                    // Определяем, правильный ли ответ
+                                    $isCorrect = $option->correct;
+
+                                    // SVG иконки для правильного и неправильного ответов
+                                    $correctIcon = '<svg class="inline-block h-5 w-5 text-green-600 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>';
+
+                                    $incorrectIcon = '<svg class="inline-block h-5 w-5 text-red-600 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                    </svg>';
+
+                                    // Формируем HTML для ответа
+                                    $html = '<div class="flex items-start">';
+                                    $html .= $isCorrect ? $correctIcon : $incorrectIcon;
+                                    $html .= '<div>';
+                                    $html .= '<div class="font-medium ' . ($isCorrect ? 'text-green-700' : 'text-red-700') . '">' . $option->option . '</div>';
+
+                                    // Добавляем объяснение, если оно есть
+                                    if ($option->rationale) {
+                                        $html .= '<p class="mt-1 text-xs text-gray-500">' . $option->rationale . '</p>';
+                                    }
+
+                                    $html .= '</div></div>';
+
+                                    return new HtmlString($html);
+                                })
                             ,
                             TextEntry::make('question.code_snippet')
                                 ->inlineLabel()
