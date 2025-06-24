@@ -45,7 +45,7 @@ class MyTestsResults extends BaseWidget
                 ViewAction::make('viewDetails')
                     ->label('Результаты')
                     ->modalHeading('Результаты теста')
-                    ->modalWidth('xl')
+                    ->modalWidth('6xl')
                     ->infolist(function (\Filament\Tables\Contracts\HasTable $livewire, \App\Models\Test $record): Infolist {
                         return TestResource::infolist(Infolist::make()) // Вызываем статический метод infolist()
                         ->record($record);
