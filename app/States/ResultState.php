@@ -20,7 +20,7 @@ class ResultState extends TestManagerState
             'questions' => $this->manager->questions,
             'userAnswers' => $this->manager->userAnswers,
             'totalQuestions' => $this->manager->getTotalQuestions(),
-            'currentAttempt' => $this->manager->currentAttempt,
+            'currentAttemptNumber' => $this->manager->currentAttemptNumber,
         ]);
     }
 

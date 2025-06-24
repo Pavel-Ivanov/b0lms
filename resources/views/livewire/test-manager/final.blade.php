@@ -72,6 +72,7 @@
         </div>
     @endif
 
+{{--
     <div class="flex justify-center">
         <x-filament::button
             tag="a"
@@ -81,4 +82,5 @@
             К списку тестов
         </x-filament::button>
     </div>
+--}}
 </div>

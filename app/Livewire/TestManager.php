@@ -35,8 +35,10 @@ class TestManager extends Component implements HasForms
     public int $currentQuestionIndex = 0;
     public array $correctAnswers = [];
     public ?array $data = [];
-    public int $currentAttempt = 0;
+//    public int $currentAttempt = 0;
+    public int $currentAttemptNumber = 0;
     protected ?TestManagerState $currentState = null;
+    public int $startTimeSeconds = 0;
 
     public function form(Form $form): Form
     {
@@ -86,19 +88,11 @@ BLADE
         $this->correctAnswers = $this->questions
             ->mapWithKeys(fn (Question $question) => [$question->id => $question->correctQuestionOption()->id])
             ->toArray();
-
-        $this->findTestAttempt();
+//        $this->findTestAttempt();
+        $this->userTestAttempt = $this->enrollmentStep->tests()->latest()->first();
+        $this->currentAttemptNumber = $this->enrollmentStep->tests()->count();
         $this->determineInitialState();
         $this->form->fill();
-    }
-
-    /**
-     * Initialize the state object based on the current state name
-     */
-    protected function initializeState(): void
-    {
-        $this->currentState = StateFactory::createState($this->currentStateName, $this);
-        $this->currentState->enter();
     }
 
     /**
@@ -111,7 +105,7 @@ BLADE
             $this->currentStateName = 'final';
         }
         // Check if the user has reached the maximum number of attempts
-        elseif ($this->currentAttempt >= $this->quiz->max_attempts) {
+        elseif ($this->currentAttemptNumber >= $this->quiz->max_attempts) {
             $this->currentStateName = 'final';
         }
         // Otherwise, go to initial screen
@@ -124,6 +118,41 @@ BLADE
     }
 
     /**
+     * Initialize the state object based on the current state name
+     */
+    protected function initializeState(): void
+    {
+        $this->currentState = StateFactory::createState($this->currentStateName, $this);
+        $this->currentState->enter();
+    }
+
+
+    protected function findTestAttempt(): void
+    {
+        // Find the latest test record for this user, quiz, and enrollment step
+        $this->userTestAttempt = $this->enrollmentStep->tests()->latest()->first();
+/*        $this->userTestAttempt = Test::where('user_id', auth()->id())
+            ->where('quiz_id', $this->quiz->id)
+            ->where('enrollment_step_id', $this->enrollmentStep->id)
+            ->latest()
+            ->first();*/
+
+        // Initialize currentAttempt based on the latest completed test record
+        $this->currentAttemptNumber = $this->enrollmentStep->tests()->count() + 1;
+/*        if ($this->userTestAttempt && $this->userTestAttempt->status === 'completed') {
+            $this->currentAttempt = $this->userTestAttempt->current_attempt + 1;
+        } else {
+            $this->currentAttempt = 1;
+        }*/
+
+        // If a test record exists with answers but no status, load its answers
+/*        if ($this->userTestAttempt && !$this->userTestAttempt->status && !empty($this->userTestAttempt->answers)) {
+            $this->userAnswers = $this->userTestAttempt->answers;
+        }*/
+    }
+
+
+    /**
      * Transition to a new state
      */
     public function transitionTo(string $stateName): void
@@ -132,39 +161,40 @@ BLADE
         $this->initializeState();
     }
 
-    protected function findTestAttempt(): void
-    {
-        // Find the latest test record for this user, quiz, and enrollment step
-        $this->userTestAttempt = Test::where('user_id', auth()->id())
-            ->where('quiz_id', $this->quiz->id)
-            ->where('enrollment_step_id', $this->enrollmentStep->id)
-            ->latest()
-            ->first();
-
-        // Initialize currentAttempt based on the latest completed test record
-        if ($this->userTestAttempt && $this->userTestAttempt->status === 'completed') {
-            $this->currentAttempt = $this->userTestAttempt->current_attempt;
-        } else {
-            $this->currentAttempt = 0;
-        }
-
-        // If a test record exists with answers but no status, load its answers
-        if ($this->userTestAttempt && !$this->userTestAttempt->status && !empty($this->userTestAttempt->answers)) {
-            $this->userAnswers = $this->userTestAttempt->answers;
-        }
-    }
-
     // The determineState method has been replaced by the state pattern implementation
 
     public function startTest(): void
     {
-        $this->transitionTo('test_form');
+        if ($this->currentAttemptNumber < $this->quiz->max_attempts && !$this->enrollmentStep->is_completed) {
+            ++$this->currentAttemptNumber;
+            $this->startTimeSeconds = now()->timestamp;
+            dump('start test', $this->currentAttemptNumber, $this->startTimeSeconds);
+            $this->transitionTo('test_form');
+        } else {
+            Notification::make()
+                ->title('Вы исчерпали все попытки или уже прошли тест.')
+                ->warning()
+                ->send();
+        }
     }
+
+/*    public function retakeTest(): void
+    {
+        // Check if the user has attempts left and the enrollment step is not completed
+        if ($this->currentAttemptNumber < $this->quiz->max_attempts && !$this->enrollmentStep->is_completed) {
+            $this->transitionTo('test_form');
+        } else {
+            Notification::make()
+                ->title('Вы исчерпали все попытки или уже прошли тест.')
+                ->warning()
+                ->send();
+        }
+    }*/
+
 
     public function submit(): void
     {
         $result = 0;
-        $startTime = now();
 
         // Create a new test record for this attempt
         $newTest = Test::create([
@@ -173,12 +203,12 @@ BLADE
             'enrollment_step_id' => $this->enrollmentStep->id,
             'result' => 0,
             'ip_address' => request()->ip(),
-            'time_spent' => 0,
+            'time_spent' => now()->timestamp - $this->startTimeSeconds,
             'status' => 'pending',
-            'current_attempt' => $this->currentAttempt,
-            'attempt_number' => $this->currentAttempt,
+            'current_attempt' => $this->currentAttemptNumber,
+            'attempt_number' => $this->currentAttemptNumber,
             'passed' => false,
-            'started_at' => $startTime,
+            'started_at' => now(),
             'answers' => [],
         ]);
 
@@ -241,7 +271,7 @@ BLADE
             'status' => 'completed',
             'passed' => $passed,
             'completed_at' => now(),
-            'time_spent' => now()->diffInSeconds($this->userTestAttempt->started_at),
+//            'time_spent' => now()->timestamp - $this->startTimeSeconds,
         ]);
 
         if ($passed) {
@@ -275,19 +305,6 @@ BLADE
             Notification::make()
                 ->title($message)
                 ->color('danger')
-                ->send();
-        }
-    }
-
-    public function retakeTest(): void
-    {
-        // Check if the user has attempts left and the enrollment step is not completed
-        if ($this->currentAttempt < $this->quiz->max_attempts && !$this->enrollmentStep->is_completed) {
-            $this->transitionTo('test_form');
-        } else {
-            Notification::make()
-                ->title('Вы исчерпали все попытки или уже прошли тест.')
-                ->warning()
                 ->send();
         }
     }

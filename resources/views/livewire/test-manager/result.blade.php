@@ -86,9 +86,9 @@
     </div>
 
     <div class="flex justify-center space-x-4">
-        @if(!$userTestAttempt->passed && $currentAttempt < $quiz->max_attempts)
+        @if(!$userTestAttempt->passed && $currentAttemptNumber < $quiz->max_attempts)
             <x-filament::button
-                wire:click="retakeTest"
+                wire:click="startTest"
                 color="primary"
             >
                 Пройти тест заново
@@ -99,7 +99,7 @@
             wire:click="showFinalState"
             color="success"
         >
-            Завершить просмотр результатов
+            Показать общие результаты
         </x-filament::button>
 
 {{--

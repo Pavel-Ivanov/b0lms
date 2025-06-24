@@ -18,7 +18,7 @@ class InitialScreenState extends TestManagerState
             'quiz' => $this->manager->quiz,
             'userTestAttempt' => $this->manager->userTestAttempt,
             'totalQuestions' => $this->manager->getTotalQuestions(),
-            'currentAttempt' => $this->manager->currentAttempt,
+            'currentAttempt' => $this->manager->currentAttemptNumber,
         ]);
     }
 
@@ -30,7 +30,7 @@ class InitialScreenState extends TestManagerState
         }
 
         // If all attempts are used, go to final state
-        if ($this->manager->currentAttempt >= $this->manager->quiz->max_attempts) {
+        if ($this->manager->currentAttemptNumber >= $this->manager->quiz->max_attempts) {
             return 'final';
         }
 
