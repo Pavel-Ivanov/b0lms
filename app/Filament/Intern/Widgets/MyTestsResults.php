@@ -17,13 +17,14 @@ class MyTestsResults extends BaseWidget
     {
         return $table
             ->heading('Результаты тестов')
-/*            ->defaultGroup('quiz.name')
+            ->defaultGroup('quiz.name')
             ->groupingDirectionSettingHidden()
             ->groups([
                 Group::make('quiz.name')
+                    ->label('Тест')
                     ->titlePrefixedWithLabel(false)
                     ->collapsible(),
-            ])*/
+            ])
 
             ->query(
                     Test::query()
