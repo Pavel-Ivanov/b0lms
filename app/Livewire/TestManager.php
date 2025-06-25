@@ -168,7 +168,7 @@ BLADE
         if ($this->currentAttemptNumber < $this->quiz->max_attempts && !$this->enrollmentStep->is_completed) {
             ++$this->currentAttemptNumber;
             $this->startTimeSeconds = now()->timestamp;
-            dump('start test', $this->currentAttemptNumber, $this->startTimeSeconds);
+//            dump('start test', $this->currentAttemptNumber, $this->startTimeSeconds);
             $this->transitionTo('test_form');
         } else {
             Notification::make()
