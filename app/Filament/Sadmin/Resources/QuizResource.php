@@ -91,7 +91,8 @@ class QuizResource extends Resource
                                                     ->nullable()
                                                     ->columnSpanFull(),
                                                 Forms\Components\Checkbox::make('correct')
-                                                    ->label('Правильный ответ'),
+                                                    ->label('Правильный ответ')
+                                                    ->distinct(),
                                             ])
                                             ->itemLabel(function (array $state): ?string {
                                                 return $state['option'] ?? '';
@@ -191,23 +192,20 @@ class QuizResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('lesson.name')
                     ->label('Название Урока')
-                    ->limit(50)
+                    ->limit(40)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Название Теста')
-                    ->limit(50)
+                    ->limit(40)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('questions_count')
-                    ->label('Кол-во вопросов')
+                    ->label('Вопросы')
                     ->counts('questions'),
                 Tables\Columns\TextColumn::make('passing_percentage')
-                    ->label('% для прохождения')
-                    ->suffix('%'),
-                Tables\Columns\TextColumn::make('max_attempts')
-                    ->label('Макс. попыток'),
-                Tables\Columns\IconColumn::make('is_published')
-                    ->label('Опубликован')
-                    ->boolean(),
+                    ->label('Критерии')
+                    ->formatStateUsing(fn($record) => $record->passing_percentage . '% / ' . $record->max_attempts),
+                Tables\Columns\ToggleColumn::make('is_published')
+                    ->label('Опубликован'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -226,8 +224,8 @@ class QuizResource extends Resource
                 Filter::make('is_published')
                     ->label('Опубликован')
                     ->toggle()
-
-            ])
+                    ->query(fn(Builder $query): Builder => $query->where('is_published', true))
+                    ])
             ->actions([
                 Tables\Actions\EditAction::make()
                 ->hiddenLabel(),

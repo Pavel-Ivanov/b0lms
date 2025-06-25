@@ -13,6 +13,7 @@ class Quiz extends Model
         'passing_percentage' => 80,
         'max_attempts' => 3,
     ];
+
     protected $fillable = [
         'lesson_id',
         'name',
