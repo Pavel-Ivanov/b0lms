@@ -13,6 +13,8 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -112,7 +114,8 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Имя')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')
                     ->searchable(),
@@ -140,14 +143,36 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('roles')
+                    ->label('Роли')
+                    ->relationship('roles', 'name')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('companyDepartment')
+                    ->label('Подразделение')
+                    ->relationship('companyDepartment', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('companyPosition')
+                    ->label('Должность')
+                    ->relationship('companyPosition', 'name')
+                    ->searchable()
+                    ->preload(),
+                Filter::make('is_published')
+                    ->label('Опубликован')
+                    ->toggle()
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
                 ->hiddenLabel(),
             ])
             ->bulkActions([
-            ]);
+            ])
+            ->defaultSort('name')
+            ->persistSortInSession()
+            ->persistSearchInSession()
+            ->persistFiltersInSession();
     }
 
     public static function getRelations(): array
