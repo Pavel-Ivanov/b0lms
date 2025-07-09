@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -55,18 +56,32 @@ class UserResource extends Resource
             })
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->label('Имя')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('company_info')
+                    ->label('Инфо')
                     ->getStateUsing(fn ($record) => $record->companyDepartment->name . '<br>' . $record->companyPosition->name)
                     ->html(),
                 Tables\Columns\TextColumn::make('enrollments_count')
                     ->label('Кол-во курсов')
-                    ->counts('enrollments'),
+                    ->counts('enrollments')
+                    ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('companyDepartment')
+                    ->label('Подразделение')
+                    ->relationship('companyDepartment', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('companyPosition')
+                    ->label('Должность')
+                    ->relationship('companyPosition', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->recordUrl(function ($record) {
                 return Pages\ViewUser::getUrl([$record->id]);
@@ -77,10 +92,14 @@ class UserResource extends Resource
 //                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+/*                Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                ]),*/
+            ])
+            ->defaultSort('name')
+            ->persistSortInSession()
+            ->persistSearchInSession()
+            ->persistFiltersInSession();
     }
 
     public static function getRelations(): array
