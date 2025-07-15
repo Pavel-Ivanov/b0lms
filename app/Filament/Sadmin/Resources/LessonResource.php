@@ -181,17 +181,21 @@ class LessonResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Название')
+                    ->limit(50)
+                    ->tooltip(fn($state): string => $state)
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('course.name')
                     ->label('Курс')
+                    ->limit(30)
+                    ->tooltip(fn($state): string => $state)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('position')
                     ->label('Позиция')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('quizzes_count')
-                    ->label('Кол-во тестов')
+                    ->label('Тесты')
                     ->counts('quizzes'),
                 Tables\Columns\ToggleColumn::make('is_published')
                     ->label('Опубликован'),
@@ -204,6 +208,7 @@ class LessonResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('position')
             ->filters([
                 SelectFilter::make('course')
                     ->label('Курс')
