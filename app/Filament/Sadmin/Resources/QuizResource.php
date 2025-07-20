@@ -190,14 +190,16 @@ class QuizResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('lesson.name')
-                    ->label('Название Урока')
-                    ->limit(40)
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Название Теста')
-                    ->limit(40)
+                    ->label('Название')
+                    ->limit(50)
+                    ->tooltip(fn($state): string => $state)
                     ->searchable(),
+                Tables\Columns\TextColumn::make('lesson.name')
+                    ->label('Урок')
+                    ->limit(30)
+                    ->tooltip(fn($state): string => $state)
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('questions_count')
                     ->label('Вопросы')
                     ->counts('questions'),
