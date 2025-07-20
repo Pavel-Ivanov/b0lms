@@ -47,7 +47,7 @@ class ViewEnrollment extends ViewRecord
                                     ->date('d.m.Y')
                                     ->inlineLabel(),
                             ]),
-                        Tab::make('План обучения')
+                        Tab::make('Результат обучения')
                             ->schema([
                                 RepeatableEntry::make('steps')
                                     ->hiddenLabel()
@@ -84,15 +84,15 @@ class ViewEnrollment extends ViewRecord
                                                     ->formatStateUsing(function ($state) {
                                                         return $state === true ? 'Завершен' : 'Не завершен';
                                                     }),
-                                                TextEntry::make('started_at')
+/*                                                TextEntry::make('started_at')
                                                     ->label('Начат:')
                                                     ->date('d.m.Y H:i')
-                                                    ->inlineLabel(),
+                                                    ->inlineLabel(),*/
                                                 TextEntry::make('completed_at')
                                                     ->label('Завершен:')
                                                     ->date('d.m.Y H:i')
                                                     ->inlineLabel(),
-                                                TextEntry::make('stepable_type')
+/*                                                TextEntry::make('stepable_type')
                                                     ->label('Тип:')
                                                     ->inlineLabel()
                                                     ->formatStateUsing(function ($state) {
@@ -101,7 +101,7 @@ class ViewEnrollment extends ViewRecord
                                                             Quiz::class => 'Тест',
                                                             default => 'Неизвестно',
                                                         };
-                                                    }),
+                                                    }),*/
                                                 // Отображение информации о тестах, если шаг является тестом
                                                 RepeatableEntry::make('tests')
                                                     ->label('Попытки прохождения теста:')

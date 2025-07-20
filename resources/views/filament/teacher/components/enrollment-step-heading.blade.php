@@ -4,6 +4,6 @@
         :icon="$icon"
         class="w-5 h-5 {{ $color }}"
     />
-{{--    <span class="font-medium">{{ $type }}:</span>--}}
+
     <span>{{ $text }}</span>
 </div>
