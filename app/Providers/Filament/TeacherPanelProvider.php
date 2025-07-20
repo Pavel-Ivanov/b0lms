@@ -53,6 +53,8 @@ class TeacherPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->viteTheme('resources/css/filament/teacher/theme.css')
+            ;
     }
 }
