@@ -27,8 +27,18 @@
             {!! $lesson->lesson_content !!}
         </div>
 
-        <div class="mt-2 mx-auto max-w-7xl border-b pb-4">
-            @include('filament.pages.intern.lesson-video', ['data' => $lesson->media])
+        @if($lesson->media->isNotEmpty())
+            <div class="mt-2 mx-auto max-w-7xl border-b pb-4">
+                @include('filament.pages.intern.lesson-video', ['data' => $lesson->media])
+            </div>
+        @endif
+
+        <div class="flex mt-2 justify-end">
+            <x-filament::button type="button"
+                                wire:click="markLessonAsCompleted"
+                                :disabled="$enrollment?->steps->firstWhere('id', $activeStepId)?->is_completed">
+                Отметить как завершенный
+            </x-filament::button>
         </div>
 
 {{--
