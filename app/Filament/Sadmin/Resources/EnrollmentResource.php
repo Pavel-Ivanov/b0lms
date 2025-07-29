@@ -57,6 +57,7 @@ class EnrollmentResource extends Resource
                                             ->relationship('course', 'name')
                                             ->preload()
                                             ->required()
+                                            ->searchable(['name'])
                                             ->disabled(fn (?Enrollment $record) => $record !== null)
                                             ->helperText(fn (?Enrollment $record) => $record !== null ? 'Это поле недоступно для редактирования' : null),
                                         Forms\Components\Select::make('user_id')
@@ -66,6 +67,7 @@ class EnrollmentResource extends Resource
                                             }))
                                             ->preload()
                                             ->required()
+                                            ->searchable(['name'])
                                             ->disabled(fn (?Enrollment $record) => $record !== null)
                                             ->helperText(fn (?Enrollment $record) => $record !== null ? 'Это поле недоступно для редактирования' : null),
                                         Forms\Components\DateTimePicker::make('enrollment_date')
