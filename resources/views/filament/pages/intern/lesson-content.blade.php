@@ -36,13 +36,15 @@
         @endif
 
         <div class="flex mt-2 justify-end">
-            <x-filament::button type="button"
-                                wire:click="markLessonAsCompleted"
-                                :disabled="$enrollment?->steps->firstWhere('id', $activeStepId)?->is_completed">
-                Отметить как завершенный
-            </x-filament::button>
+            @if(!$enrollment?->steps->firstWhere('id', $activeStepId)?->is_completed)
+                <x-filament::button type="button"
+                                    wire:click="markLessonAsCompleted"
+{{--                                    :disabled="$enrollment?->steps->firstWhere('id', $activeStepId)?->is_completed"--}}
+                >
+                    Отметить как завершенный
+                </x-filament::button>
+            @endif
         </div>
-
 {{--
         <div class="mt-2 mx-auto max-w-7xl">
             <p>Статус: {{ $activeStep->is_completed ? 'Завершено' : 'Не завершено' }}</p>
