@@ -10,6 +10,7 @@
         "amidesfahani/filament-tinyeditor": "^2.1",
         "awcodes/filament-tiptap-editor": "^3.5",
         "awcodes/matinee": "^1.0",
+        "bezhansalleh/filament-panel-switch": "^1.1",
         "bezhansalleh/filament-shield": "^3.3",
         "filament/filament": "^3.2",
         "filament/spatie-laravel-media-library-plugin": "^3.2",

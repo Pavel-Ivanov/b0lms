@@ -1,3 +1,4 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
+@source '../../../../vendor/bezhansalleh/filament-panel-switch/resources/views/**/*.blade.php';
 
 @config 'tailwind.config.js';

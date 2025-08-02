@@ -20,11 +20,35 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
+use BezhanSalleh\PanelSwitch\PanelSwitch;
 
 class SadminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        PanelSwitch::configureUsing(function (PanelSwitch $panelSwitch) {
+            $panelSwitch
+                ->modalHeading('Переключатель Панелей')
+                ->modalWidth('sm')
+                ->labels([
+                    'sadmin' => 'Панель Администратора',
+                    'teacher' => 'Панель Учителя',
+                    'intern' => 'Панель Студента',
+                ])
+                ->icons([
+                    'sadmin' => 'heroicon-o-cog',
+                    'teacher' => 'heroicon-o-academic-cap',
+                    'intern' => 'heroicon-o-user',
+                ])
+                ->iconSize(12)
+                ->visible(fn (): bool => auth()->user()?->hasAnyRole([
+                    'Superadmin',
+                    'Администратор',
+                ]))
+                ->panels(['sadmin', 'teacher', 'intern'])
+            ;
+        });
+
         return $panel
 //            ->default()
             ->id('sadmin')
