@@ -103,9 +103,9 @@ class EnrollmentResource extends Resource
                 ProgressBar::make('bar')
                     ->label('Выполнено')
                     ->getStateUsing(function (Enrollment $record) {
-                        $progress = $record->progress();
-                        $total = $progress['max'];
-                        $progress = $progress['value'];
+                        $progressData = $record->progressData();
+                        $total = $progressData['max'];
+                        $progress = $progressData['value'];
                         return [
                             'total' => $total,
                             'progress' => $progress,

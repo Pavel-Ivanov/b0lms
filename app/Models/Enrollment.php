@@ -57,7 +57,7 @@ class Enrollment extends Model
         return $this->user->name . ' / ' . Carbon::parse($this->enrollment_date)->format("d.m.Y") . ' - ' . Carbon::parse($this->completion_deadline)->format("d.m.Y")  ;
     }
 
-    public function progress(): array
+    public function progressData(): array
     {
         $stepsCount   = $this->steps->count();
         $completedCount = $this->completedSteps()->count();
@@ -67,6 +67,11 @@ class Enrollment extends Model
             'max'        => $stepsCount,
             'percentage' => (int) floor(($completedCount / max(1, $stepsCount)) * 100),
         ];
+    }
+
+    public function progress()
+    {
+        return $this->hasMany(EnrollmentStep::class);
     }
 
     public function isCompleted(): bool
