@@ -276,6 +276,12 @@ class EnrollmentView extends Page
 
         if ($nextStep) {
             $nextStep->update(['is_enabled' => true]);
+
+            // Переходим к следующему шагу
+            return redirect()->route('filament.intern.pages.enrollments', [
+                'enrollment_id' => $this->enrollment->id,
+                'step_id' => $nextStep->id
+            ]);
         }
 
         $this->dispatch('enrollment-step-completed');
