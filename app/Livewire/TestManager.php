@@ -331,6 +331,32 @@ BLADE
     }
 
     /**
+     * Navigate to the next step in the enrollment
+     */
+    public function nextStep()
+    {
+        // Find the next step in the enrollment
+        $nextStep = $this->enrollment->steps()
+            ->where('position', '>', $this->enrollmentStep->position)
+            ->orderBy('position')
+            ->first();
+
+        if ($nextStep) {
+            // Redirect to the next step
+            return redirect()->route('filament.intern.pages.enrollments', [
+                'enrollment_id' => $this->enrollment->id,
+                'step_id' => $nextStep->id
+            ]);
+        } else {
+            // If there's no next step, redirect to the enrollment view
+            return redirect()->route('filament.intern.pages.enrollments', [
+                'enrollment_id' => $this->enrollment->id,
+                'step_id' => $this->enrollmentStep->id
+            ]);
+        }
+    }
+
+    /**
      * Initialize the state object after component rehydration
      */
     public function hydrate(): void

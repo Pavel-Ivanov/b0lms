@@ -43,7 +43,7 @@
 
     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
         <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">Детальные результаты</h3>
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Подробные результаты</h3>
         </div>
 
         <div class="border-t border-gray-200">
@@ -85,7 +85,7 @@
         </div>
     </div>
 
-    <div class="flex justify-center space-x-4">
+    <div class="flex justify-end space-x-4">
         @if(!$userTestAttempt->passed && $currentAttemptNumber < $quiz->max_attempts)
             <x-filament::button
                 wire:click="startTest"
@@ -94,22 +94,22 @@
                 Пройти тест заново
             </x-filament::button>
         @endif
+            @if($userTestAttempt->passed)
+                <x-filament::button
+                    wire:click="nextStep"
+                    color="success"
+                >
+                    Перейти к следующему шагу
+                </x-filament::button>
+            @endif
 
-        <x-filament::button
-            wire:click="showFinalState"
-            color="success"
-        >
-            Показать общие результаты
-        </x-filament::button>
-
-{{--
-        <x-filament::button
-            tag="a"
-            href="{{ url()->previous() }}"
-            color="secondary"
-        >
-            К списку тестов
-        </x-filament::button>
---}}
+            {{--
+                    <x-filament::button
+                        wire:click="showFinalState"
+                        color="success"
+                    >
+                        Показать общие результаты
+                    </x-filament::button>
+            --}}
     </div>
 </div>
