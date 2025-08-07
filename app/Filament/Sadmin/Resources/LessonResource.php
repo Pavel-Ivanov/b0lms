@@ -21,6 +21,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\TiptapEditor;
+use Illuminate\Contracts\Support\Htmlable;
 
 //use Hugomyb\FilamentMediaAction\Forms\Components\Actions\MediaAction;
 //use Illuminate\Database\Eloquent\Builder;
@@ -36,7 +37,12 @@ class LessonResource extends Resource
     protected static ?string $pluralModelLabel = 'Уроки';
     protected static ?string $navigationGroup = 'Академия';
     protected static ?string $navigationLabel = 'Уроки';
+    protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'announcement', 'lesson_content'];
+    }
 
     public static function form(Form $form): Form
     {

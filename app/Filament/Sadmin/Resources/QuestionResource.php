@@ -24,6 +24,11 @@ class QuestionResource extends Resource
     protected static ?string $pluralModelLabel = 'Вопросы';
     protected static ?string $navigationGroup = 'Академия';
     protected static ?string $navigationLabel = 'Вопросы';
+    protected static ?string $recordTitleAttribute = 'question_text';
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['question_text', 'hint'];
+    }
 
 
     public static function form(Form $form): Form

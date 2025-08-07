@@ -25,6 +25,11 @@ class QuestionOptionResource extends Resource
     protected static ?string $pluralModelLabel = 'Ответы';
     protected static ?string $navigationGroup = 'Справочники';
     protected static ?string $navigationLabel = 'Ответы на вопросы';
+    protected static ?string $recordTitleAttribute = 'option';
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['option', 'rationale'];
+    }
 
 
     public static function form(Form $form): Form
