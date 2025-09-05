@@ -3,7 +3,9 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Sadmin\Backups;
+use App\Filament\Sadmin\Resources\LessonResource;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use CharrafiMed\GlobalSearchModal\GlobalSearchModalPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -94,6 +96,13 @@ class SadminPanelProvider extends PanelProvider
                     ->usingPage(Backups::class)
                     ->usingPolingInterval('60s')
                     ->timeout(120),
+                GlobalSearchModalPlugin::make()
+//                    ->scopes(LessonResource::class)
+                    ->highlightQueryStyles([
+                        'background-color' => 'yellow',
+                        'font-weight' => 'bold',
+                    ])
+                ,
             ])
 //            ->viteTheme('resources/css/filament/sadmin/theme.css')
 //            ->viteTheme('"C:\Herd\b0lms\resources\css\filament\sadmin\theme.css"')

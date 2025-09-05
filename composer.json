@@ -12,6 +12,7 @@
         "awcodes/matinee": "^1.0",
         "bezhansalleh/filament-panel-switch": "^1.1",
         "bezhansalleh/filament-shield": "^3.3",
+        "charrafimed/global-search-modal": "^3.7",
         "filament/filament": "^3.2",
         "filament/spatie-laravel-media-library-plugin": "^3.2",
         "hugomyb/filament-media-action": "^3.1",
