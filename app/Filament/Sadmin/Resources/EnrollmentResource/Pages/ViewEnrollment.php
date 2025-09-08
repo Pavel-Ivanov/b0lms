@@ -24,9 +24,10 @@ class ViewEnrollment extends ViewRecord
                 ->requiresConfirmation()
                 ->action(function () {
                     $result = $this->record->syncLearningPlan();
+                    $msg = ($result['message'] ?? '');
                     \Filament\Notifications\Notification::make()
                         ->title('Синхронизация плана')
-                        ->body("Добавлено: {$result['added']}, Переиндексировано: {$result['reindexed']}, Открыто: {$result['enabled']}")
+                        ->body(trim($msg . "\nДобавлено: {$result['added']}, Переиндексировано: {$result['reindexed']}, Открыто: {$result['enabled']}"))
                         ->success()
                         ->send();
                     $this->record->refresh();
