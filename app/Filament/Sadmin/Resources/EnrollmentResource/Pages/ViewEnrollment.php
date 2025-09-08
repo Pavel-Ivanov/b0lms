@@ -14,4 +14,23 @@ class ViewEnrollment extends ViewRecord
     {
         return $this->record->course->name . ' - ' . $this->record->enrollmentInfo();
     }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\Action::make('syncPlan')
+                ->label('Синхронизировать план')
+                ->color('primary')
+                ->requiresConfirmation()
+                ->action(function () {
+                    $result = $this->record->syncLearningPlan();
+                    \Filament\Notifications\Notification::make()
+                        ->title('Синхронизация плана')
+                        ->body("Добавлено: {$result['added']}, Переиндексировано: {$result['reindexed']}, Открыто: {$result['enabled']}")
+                        ->success()
+                        ->send();
+                    $this->record->refresh();
+                }),
+        ];
+    }
 }
