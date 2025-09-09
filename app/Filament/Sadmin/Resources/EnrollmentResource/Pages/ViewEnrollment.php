@@ -32,6 +32,20 @@ class ViewEnrollment extends ViewRecord
                         ->send();
                     $this->record->refresh();
                 }),
+            Actions\Action::make('syncPlanReopen')
+                ->label('Дообучить (с reopen)')
+                ->color('warning')
+                ->requiresConfirmation()
+                ->action(function () {
+                    $result = $this->record->syncLearningPlan(true, true, true);
+                    $msg = ($result['message'] ?? '');
+                    \Filament\Notifications\Notification::make()
+                        ->title('Дообучение выполнено')
+                        ->body(trim($msg . "\nДобавлено: {$result['added']}, Переиндексировано: {$result['reindexed']}, Открыто: {$result['enabled']}"))
+                        ->success()
+                        ->send();
+                    $this->record->refresh();
+                }),
         ];
     }
 }
