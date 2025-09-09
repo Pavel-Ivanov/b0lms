@@ -105,17 +105,8 @@ class Enrollment extends Model
             $reindexed = 0;
             $enabled = 0;
 
-            // If enrollment is fully completed and we don't want to reopen, abort politely
-            if ($this->isCompleted() && !$includeCompletedReopen) {
-                $this->update(['last_synced_at' => now()]);
-                return [
-                    'success' => true,
-                    'message' => 'Назначение завершено — синхронизация пропущена (ничего не изменено).',
-                    'added' => 0,
-                    'reindexed' => 0,
-                    'enabled' => 0,
-                ];
-            }
+            // We'll check completion status, but only skip if there are no new steps to add
+            $wasCompleted = $this->isCompleted();
 
             $course = $this->course;
             if (!$course) {
@@ -143,6 +134,27 @@ class Enrollment extends Model
             foreach ($existing as $step) {
                 $k = $step->stepable_type . '|' . $step->stepable_id;
                 $existingByKey[$k] = $step;
+            }
+
+            // Determine how many new steps are missing
+            $missingKeys = [];
+            foreach ($reference as $r) {
+                $key = ($r['stepable_type'] ?? '') . '|' . ($r['stepable_id'] ?? '');
+                if (!isset($existingByKey[$key])) {
+                    $missingKeys[] = $key;
+                }
+            }
+
+            // If enrollment was completed and we don't want to reopen, but there are no new steps, skip
+            if ($wasCompleted && !$includeCompletedReopen && count($missingKeys) === 0) {
+                $this->update(['last_synced_at' => now()]);
+                return [
+                    'success' => true,
+                    'message' => 'Назначение завершено — новых шагов нет, синхронизация пропущена.',
+                    'added' => 0,
+                    'reindexed' => 0,
+                    'enabled' => 0,
+                ];
             }
 
             // Add missing steps (set desired position immediately)
