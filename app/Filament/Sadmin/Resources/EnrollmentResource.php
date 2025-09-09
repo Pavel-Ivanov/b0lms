@@ -145,6 +145,10 @@ class EnrollmentResource extends Resource
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_steps_created')
                     ->label('План обучения'),
+                Tables\Columns\IconColumn::make('completed_status')
+                    ->label('Завершено')
+                    ->boolean()
+                    ->getStateUsing(fn(Enrollment $record) => $record->isCompleted()),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
