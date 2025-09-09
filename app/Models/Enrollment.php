@@ -41,7 +41,8 @@ class Enrollment extends Model
 
     public function steps(): HasMany
     {
-        return $this->hasMany(EnrollmentStep::class);
+        // Always order steps by explicit learning position
+        return $this->hasMany(EnrollmentStep::class)->orderBy('position');
     }
 
     public function completedSteps()
