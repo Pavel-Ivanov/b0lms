@@ -124,9 +124,20 @@ class EnrollmentResource extends Resource
                     ->relationship('user', 'name')
                     ->searchable()
                     ->preload(),
+                Filter::make('incomplete')
+                    ->label('Не завершенные')
+                    ->query(fn (Builder $query): Builder => $query
+                        ->whereHas('steps', fn ($q) => $q->where('is_completed', false))
+                    ),
+                Filter::make('overdue')
+                    ->label('Просроченные')
+                    ->query(fn (Builder $query): Builder => $query
+                        ->whereDate('completion_deadline', '>', now())
+                        ->whereHas('steps', fn ($q) => $q->where('is_completed', false))
+                    ),
                 Filter::make('is_not_steps_created')
                     ->label('Нет плана обучения')
-                    ->query(fn (Builder $query): Builder => $query->where('is_steps_created', false))
+                    ->query(fn (Builder $query): Builder => $query->where('is_steps_created', false)),
             ])
             ->recordUrl(function ($record) {
                 return Pages\ViewEnrollment::getUrl([$record->id]);
