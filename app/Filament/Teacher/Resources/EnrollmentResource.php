@@ -126,17 +126,36 @@ class EnrollmentResource extends Resource
                     ->relationship('user', 'name')
                     ->searchable()
                     ->preload(),
-                Filter::make('incomplete')
-                    ->label('Не завершенные')
-                    ->query(fn (Builder $query): Builder => $query
-                        ->whereHas('steps', fn ($q) => $q->where('is_completed', false))
-                    ),
-                Filter::make('overdue')
-                    ->label('Просроченные')
-                    ->query(fn (Builder $query): Builder => $query
-                        ->whereDate('completion_deadline', '>', now())
-                        ->whereHas('steps', fn ($q) => $q->where('is_completed', false))
-                    ),
+                SelectFilter::make('user.companyDepartment')
+                    ->label('Подразделение')
+                    ->relationship('user.companyDepartment', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('status')
+                    ->label('Состояние назначения')
+                    ->options([
+                        'not_started' => 'Не начатые',
+                        'incomplete' => 'Не завершенные',
+                        'overdue' => 'Просроченные',
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $value = $data['value'] ?? null;
+                        if (!$value) {
+                            return $query;
+                        }
+                        return match ($value) {
+                            'not_started' => $query
+                                ->where('is_steps_created', true)
+                                ->whereHas('steps')
+                                ->whereDoesntHave('completedSteps'),
+                            'incomplete' => $query
+                                ->whereHas('steps', fn ($q) => $q->where('is_completed', false)),
+                            'overdue' => $query
+                                ->whereDate('completion_deadline', '<', now())
+                                ->whereHas('steps', fn ($q) => $q->where('is_completed', false)),
+                            default => $query,
+                        };
+                    }),
                 Filter::make('is_not_steps_created')
                     ->label('Нет плана обучения')
                     ->query(fn (Builder $query): Builder => $query->where('is_steps_created', false)),
