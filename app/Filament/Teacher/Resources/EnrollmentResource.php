@@ -92,10 +92,12 @@ class EnrollmentResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Студент')
+                    ->searchable()
                     ->sortable(),
-/*                Tables\Columns\TextColumn::make('enrollment_date')
-                    ->dateTime()
-                    ->sortable(),*/
+                Tables\Columns\TextColumn::make('enrollment_date')
+                    ->label('Дата назначения')
+                    ->date('d.m.Y')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('completion_deadline')
                     ->label('Дата окончания')
                     ->date('d.m.Y')

@@ -189,7 +189,7 @@ class CourseResource extends Resource
         return $table
             ->columns([
                 SpatieMediaLibraryImageColumn::make('Course Image')
-                    ->label('Изображение')
+                    ->label('')
                     ->collection('course_images'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Название')
@@ -203,18 +203,20 @@ class CourseResource extends Resource
                     ->label('Уровень'),
                 Tables\Columns\TextColumn::make('lessons_count')
                     ->label('Кол-во уроков')
-                    ->counts('lessons'),
+                    ->counts('lessons')
+                    ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_published')
                     ->label('Опубликован'),
-                Tables\Columns\TextColumn::make('created_at')
+/*                Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true),*/
             ])
+            ->defaultSort('name')
             ->filters([
                 SelectFilter::make('courseCategory')
                     ->label('Категория')
@@ -237,9 +239,9 @@ class CourseResource extends Resource
                 ->hiddenLabel(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+/*                Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                ]),*/
             ])
             ->persistSortInSession()
             ->persistSearchInSession()
