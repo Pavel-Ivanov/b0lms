@@ -132,7 +132,7 @@ class EnrollmentResource extends Resource
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('status')
-                    ->label('Состояние назначения')
+                    ->label('Состояние')
                     ->options([
                         'not_started' => 'Не начатые',
                         'incomplete' => 'Не завершенные',
