@@ -266,7 +266,11 @@ class EnrollmentView extends Page
     public function markLessonAsCompleted()
     {
         $activeStep = EnrollmentStep::findOrFail($this->activeStepId);
-        $activeStep->update(['is_completed' => true]);
+        $updateData = ['is_completed' => true];
+        if (is_null($activeStep->completed_at)) {
+            $updateData['completed_at'] = now();
+        }
+        $activeStep->update($updateData);
 
         // Находим следующий шаг и делаем его доступным
         $nextStep = $this->enrollment->steps()
