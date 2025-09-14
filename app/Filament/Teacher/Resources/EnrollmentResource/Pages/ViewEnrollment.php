@@ -12,6 +12,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -78,60 +79,22 @@ class ViewEnrollment extends ViewRecord
                                                 return new \Illuminate\Support\HtmlString($html);
                                             })
                                             ->schema([
-                                                TextEntry::make('is_completed')
+/*                                                TextEntry::make('is_completed')
                                                     ->label('Статус:')
                                                     ->inlineLabel()
                                                     ->formatStateUsing(function ($state) {
                                                         return $state === true ? 'Завершен' : 'Не завершен';
-                                                    }),
-/*                                                TextEntry::make('started_at')
-                                                    ->label('Начат:')
-                                                    ->date('d.m.Y H:i')
-                                                    ->inlineLabel(),*/
+                                                    }),*/
                                                 TextEntry::make('completed_at')
                                                     ->label('Завершен:')
                                                     ->date('d.m.Y H:i')
-                                                    ->inlineLabel(),
-/*                                                TextEntry::make('stepable_type')
-                                                    ->label('Тип:')
                                                     ->inlineLabel()
-                                                    ->formatStateUsing(function ($state) {
-                                                        return match ($state) {
-                                                            Lesson::class => 'Урок',
-                                                            Quiz::class => 'Тест',
-                                                            default => 'Неизвестно',
-                                                        };
-                                                    }),*/
+                                                    ->visible(fn (EnrollmentStep $record) => (bool) $record->is_completed),
                                                 // Отображение информации о тестах, если шаг является тестом
-                                                RepeatableEntry::make('tests')
+                                                ViewEntry::make('tests')
                                                     ->label('Попытки прохождения теста:')
-                                                    ->visible(fn (EnrollmentStep $record) => $record->stepable_type === Quiz::class)
-                                                    ->schema([
-                                                        TextEntry::make('attempt_number')
-                                                            ->label('Номер попытки:')
-                                                            ->inlineLabel(),
-                                                        TextEntry::make('result')
-                                                            ->label('Результат:')
-                                                            ->inlineLabel(),
-                                                        TextEntry::make('passed')
-                                                            ->label('Пройден:')
-                                                            ->inlineLabel()
-                                                            ->formatStateUsing(function ($state) {
-                                                                return $state === true ? 'Да' : 'Нет';
-                                                            }),
-                                                        TextEntry::make('started_at')
-                                                            ->label('Начат:')
-                                                            ->date('d.m.Y H:i')
-                                                            ->inlineLabel(),
-                                                        TextEntry::make('completed_at')
-                                                            ->label('Завершен:')
-                                                            ->date('d.m.Y H:i')
-                                                            ->inlineLabel(),
-                                                        TextEntry::make('time_spent')
-                                                            ->label('Затраченное время (сек):')
-                                                            ->inlineLabel(),
-                                                    ])
-                                                    ->contained(false),
+                                                    ->visible(fn (EnrollmentStep $record) => $record->stepable_type === Quiz::class && (bool) $record->is_completed)
+                                                    ->view('filament.teacher.components.tests-table')
                                             ]),
                                     ])
                                     ->contained(false),
