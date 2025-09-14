@@ -168,7 +168,6 @@ BLADE
         if ($this->currentAttemptNumber < $this->quiz->max_attempts && !$this->enrollmentStep->is_completed) {
             ++$this->currentAttemptNumber;
             $this->startTimeSeconds = now()->timestamp;
-//            dump('start test', $this->currentAttemptNumber, $this->startTimeSeconds);
             $this->transitionTo('test_form');
         } else {
             Notification::make()
@@ -201,14 +200,15 @@ BLADE
             'user_id' => auth()->id(),
             'quiz_id' => $this->quiz->id,
             'enrollment_step_id' => $this->enrollmentStep->id,
-            'result' => 0,
             'ip_address' => request()->ip(),
+            'result' => 0,
             'time_spent' => now()->timestamp - $this->startTimeSeconds,
             'status' => 'pending',
             'current_attempt' => $this->currentAttemptNumber,
             'attempt_number' => $this->currentAttemptNumber,
             'passed' => false,
-            'started_at' => now(),
+//            'started_at' => now(),
+            'started_at' => $this->startTimeSeconds,
             'answers' => [],
         ]);
 
