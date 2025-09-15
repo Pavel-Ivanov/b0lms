@@ -117,7 +117,7 @@ class Lesson extends Model implements HasMedia
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['course_id', 'name', 'announcement', 'lesson_content', 'position', 'is_published', 'video']);
+            ->logFillable();
     }
 
 }

@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class TestAnswer extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'correct',
         'user_id',
@@ -40,6 +44,12 @@ class TestAnswer extends Model
     public function option(): BelongsTo
     {
         return $this->belongsTo(QuestionOption::class, 'option_id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable();
     }
 
 }

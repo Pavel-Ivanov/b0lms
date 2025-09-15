@@ -7,12 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Course extends Model implements HasMedia
 {
     use InteractsWithMedia;
+    use LogsActivity;
+
     protected $fillable = [
         'name',
         'announcement',
@@ -73,11 +77,6 @@ class Course extends Model implements HasMedia
         return $this->hasMany(Enrollment::class);
     }
 
-/*    public function quizzes(): HasMany
-    {
-        return $this->hasMany(Quiz::class);
-    }*/
-
     public function courseDates(): string
     {
         return Carbon::parse($this->enrollment_date)->format("d.m.Y") . ' - ' . Carbon::parse($this->completion_deadline)->format("d.m.Y")  ;
@@ -114,7 +113,6 @@ class Course extends Model implements HasMedia
         return $steps;
     }
 
-
     public function progress(): array
     {
         $lessons   = $this->publishedLessons;
@@ -128,6 +126,12 @@ class Course extends Model implements HasMedia
             'max'        => $lessons->count(),
             'percentage' => (int) floor(($completed / max(1, $lessons->count())) * 100),
         ];
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable();
     }
 
 }

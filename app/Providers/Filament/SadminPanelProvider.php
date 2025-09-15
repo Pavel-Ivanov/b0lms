@@ -97,12 +97,12 @@ class SadminPanelProvider extends PanelProvider
                     ->usingPage(Backups::class)
                     ->usingPolingInterval('60s')
                     ->timeout(120),
-                GlobalSearchModalPlugin::make()
+/*                GlobalSearchModalPlugin::make()
 //                    ->scopes(LessonResource::class)
                     ->highlightQueryStyles([
                         'background-color' => 'yellow',
                         'font-weight' => 'bold',
-                    ]),
+                    ]),*/
                 ActivitylogPlugin::make()
                     ->navigationGroup('Администрирование')
                     ->authorize(

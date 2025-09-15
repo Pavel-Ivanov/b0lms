@@ -6,9 +6,13 @@ use App\Enums\StepType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class EnrollmentStep extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'enrollment_id',
         'course_id',
@@ -70,9 +74,7 @@ class EnrollmentStep extends Model
         if ($this->is_completed) {
             return $this;
         }
-
         $this->is_completed = true;
-
         return $this;
     }
 
@@ -81,9 +83,7 @@ class EnrollmentStep extends Model
         if (!$this->is_completed) {
             return $this;
         }
-
         $this->is_completed = false;
-
         return $this;
     }
 
@@ -97,9 +97,7 @@ class EnrollmentStep extends Model
         if ($this->is_enabled) {
             return $this;
         }
-
         $this->is_enabled = true;
-
         return $this;
     }
 
@@ -108,10 +106,14 @@ class EnrollmentStep extends Model
         if (!$this->is_enabled) {
             return $this;
         }
-
         $this->is_enabled = false;
-
         return $this;
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable();
     }
 
 }

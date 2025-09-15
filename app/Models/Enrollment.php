@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Enrollment extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'course_id',
         'user_id',
@@ -280,6 +284,12 @@ class Enrollment extends Model
             'count' => $insertedCount,
             'total' => count($steps)
         ];
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable();
     }
 
 }

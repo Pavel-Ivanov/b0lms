@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Test extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'result',
         'ip_address',
@@ -55,6 +59,12 @@ class Test extends Model
     public function testAnswers(): HasMany
     {
         return $this->hasMany(TestAnswer::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable();
     }
 
 }
