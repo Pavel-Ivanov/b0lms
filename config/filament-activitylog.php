@@ -2,8 +2,8 @@
 
 return [
     'resources' => [
-        'label'                     => 'Activity Log',
-        'plural_label'              => 'Activity Logs',
+        'label'                     => 'Лог',
+        'plural_label'              => 'Логи',
         'hide_restore_action'       => false,
         'restore_action_label'      => 'Restore',
         'hide_resource_action'      => false,

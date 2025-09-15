@@ -11,7 +11,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Test extends Model
 {
-    use LogsActivity;
+//    use LogsActivity;
 
     protected $fillable = [
         'result',
@@ -61,10 +61,10 @@ class Test extends Model
         return $this->hasMany(TestAnswer::class);
     }
 
-    public function getActivitylogOptions(): LogOptions
+/*    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logFillable();
-    }
+    }*/
 
 }

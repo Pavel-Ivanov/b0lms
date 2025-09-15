@@ -107,7 +107,8 @@ class SadminPanelProvider extends PanelProvider
                     ->navigationGroup('Администрирование')
                     ->authorize(
                         fn () => auth()->user()->hasRole(['Superadmin'])
-                    ),
+                    )
+                    ->translateLogKey(fn($label) => __("events.".$label)),
             ])
 //            ->viteTheme('resources/css/filament/sadmin/theme.css')
 //            ->viteTheme('"C:\Herd\b0lms\resources\css\filament\sadmin\theme.css"')

@@ -9,7 +9,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class TestAnswer extends Model
 {
-    use LogsActivity;
+//    use LogsActivity;
 
     protected $fillable = [
         'correct',
@@ -46,10 +46,10 @@ class TestAnswer extends Model
         return $this->belongsTo(QuestionOption::class, 'option_id');
     }
 
-    public function getActivitylogOptions(): LogOptions
+/*    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logFillable();
-    }
+    }*/
 
 }

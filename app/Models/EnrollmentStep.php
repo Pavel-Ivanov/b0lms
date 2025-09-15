@@ -11,7 +11,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class EnrollmentStep extends Model
 {
-    use LogsActivity;
+//    use LogsActivity;
 
     protected $fillable = [
         'enrollment_id',
@@ -110,10 +110,10 @@ class EnrollmentStep extends Model
         return $this;
     }
 
-    public function getActivitylogOptions(): LogOptions
+/*    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logFillable();
-    }
+    }*/
 
 }
