@@ -21,6 +21,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Rmsramos\Activitylog\ActivitylogPlugin;
 use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 use BezhanSalleh\PanelSwitch\PanelSwitch;
 
@@ -101,8 +102,12 @@ class SadminPanelProvider extends PanelProvider
                     ->highlightQueryStyles([
                         'background-color' => 'yellow',
                         'font-weight' => 'bold',
-                    ])
-                ,
+                    ]),
+                ActivitylogPlugin::make()
+                    ->navigationGroup('Администрирование')
+                    ->authorize(
+                        fn () => auth()->user()->hasRole(['Superadmin'])
+                    ),
             ])
 //            ->viteTheme('resources/css/filament/sadmin/theme.css')
 //            ->viteTheme('"C:\Herd\b0lms\resources\css\filament\sadmin\theme.css"')
