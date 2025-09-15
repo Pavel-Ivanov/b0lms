@@ -149,6 +149,7 @@ class EnrollmentResource extends Resource
                                 ->whereHas('steps')
                                 ->whereDoesntHave('completedSteps'),
                             'incomplete' => $query
+                                ->whereDate('completion_deadline', '>=', now())
                                 ->whereHas('steps', fn ($q) => $q->where('is_completed', false)),
                             'overdue' => $query
                                 ->whereDate('completion_deadline', '<', now())
