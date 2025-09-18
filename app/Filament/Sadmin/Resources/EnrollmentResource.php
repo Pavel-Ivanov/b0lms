@@ -97,15 +97,42 @@ class EnrollmentResource extends Resource
                                     ->hiddenLabel()
                                     ->relationship('steps')
                                     ->schema([
-                                        //
+/*                                        Forms\Components\Placeholder::make('step_title')
+                                            ->hiddenLabel()
+//                                            ->label('Шаг')
+                                            ->content(function (?array $state): string {
+                                                if (empty($state) || empty($state['stepable_type']) || empty($state['stepable_id'])) {
+                                                    return '';
+                                                }
+                                                return match ($state['stepable_type']) {
+                                                    \App\Models\Lesson::class => optional(\App\Models\Lesson::find($state['stepable_id']))?->name,
+                                                    \App\Models\Quiz::class => 'Тест — ' . optional(\App\Models\Quiz::find($state['stepable_id']))?->name,
+                                                    default => ''
+                                                } ?? '';
+                                            })
+                                            ->columnSpanFull(),*/
+                                        Forms\Components\TextInput::make('max_attempts')
+                                            ->label('Макс. попыток')
+                                            ->numeric()
+                                            ->minValue(1)
+                                            ->maxValue(100)
+                                            ->visible(fn (Forms\Get $get) => $get('stepable_type') === \App\Models\Quiz::class)
+                                            ->helperText('Количество попыток для данного теста.'),
+                                        Forms\Components\TextInput::make('passing_percentage')
+                                            ->label('Проходной балл, %')
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->maxValue(100)
+                                            ->visible(fn (Forms\Get $get) => $get('stepable_type') === \App\Models\Quiz::class)
+                                            ->helperText('Минимальный процент правильных ответов для зачёта.'),
                                     ])
-                                        ->itemLabel(function (array $state): ?string {
-                                        if (empty($state['stepable_type'])) {
+                                        ->itemLabel(function (?array $state): ?string {
+                                        if (empty($state) || empty($state['stepable_type'])) {
                                             return '';
                                         }
                                         return match ($state['stepable_type']) {
-                                            Lesson::class => 'Урок - ' . Lesson::findOrFail($state['stepable_id'])->name,
-                                            Quiz::class => 'Тест - ' . Quiz::findOrFail($state['stepable_id'])->name,
+                                            Lesson::class => optional(Lesson::find($state['stepable_id']))?->name,
+                                            Quiz::class => optional(Quiz::find($state['stepable_id']))?->name,
                                             default => '',
                                         };
 

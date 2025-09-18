@@ -20,6 +20,7 @@ class TestFormState extends TestManagerState
             'userTestAttempt' => $this->manager->userTestAttempt,
 //            'totalQuestions' => $this->manager->getTotalQuestions(),
             'currentAttempt' => $this->manager->currentAttemptNumber,
+            'maxAttempts' => $this->manager->enrollmentStep->max_attempts ?? $this->manager->quiz->max_attempts,
         ]);
     }
 

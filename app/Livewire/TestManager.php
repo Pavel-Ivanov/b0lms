@@ -105,7 +105,7 @@ BLADE
             $this->currentStateName = 'final';
         }
         // Check if the user has reached the maximum number of attempts
-        elseif ($this->currentAttemptNumber >= $this->quiz->max_attempts) {
+        elseif ($this->currentAttemptNumber >= $this->getEffectiveMaxAttempts()) {
             $this->currentStateName = 'final';
         }
         // Otherwise, go to initial screen
@@ -161,11 +161,21 @@ BLADE
         $this->initializeState();
     }
 
+    private function getEffectiveMaxAttempts(): int
+    {
+        return (int) ($this->enrollmentStep->max_attempts ?? $this->quiz->max_attempts);
+    }
+
+    private function getEffectivePassingPercentage(): int
+    {
+        return (int) ($this->enrollmentStep->passing_percentage ?? $this->quiz->passing_percentage);
+    }
+
     // The determineState method has been replaced by the state pattern implementation
 
     public function startTest(): void
     {
-        if ($this->currentAttemptNumber < $this->quiz->max_attempts && !$this->enrollmentStep->is_completed) {
+        if ($this->currentAttemptNumber < $this->getEffectiveMaxAttempts() && !$this->enrollmentStep->is_completed) {
             ++$this->currentAttemptNumber;
             $this->startTimeSeconds = now()->timestamp;
             $this->transitionTo('test_form');
@@ -263,7 +273,7 @@ BLADE
         }
 
         $scorePercentage = $totalQuestions > 0 ? ($score / $totalQuestions) * 100 : 0;
-        $passed = $scorePercentage >= $this->quiz->passing_percentage;
+        $passed = $scorePercentage >= $this->getEffectivePassingPercentage();
 
         // Update the current test record with the score and status
         $this->userTestAttempt->update([
@@ -300,7 +310,7 @@ BLADE
                 ->success()
                 ->send();
         } else {
-            $message = 'Тест не пройден. Необходимо набрать минимум ' . $this->quiz->passing_percentage . '% правильных ответов.';
+            $message = 'Тест не пройден. Необходимо набрать минимум ' . $this->getEffectivePassingPercentage() . '% правильных ответов.';
 
             Notification::make()
                 ->title($message)

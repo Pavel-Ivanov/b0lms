@@ -9,6 +9,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use App\Models\Quiz;
 
 class Enrollment extends Model
 {
@@ -133,6 +134,17 @@ class Enrollment extends Model
                 $referenceKeys[$key] = $idx + 1; // 1-based position
             }
 
+            // Preload quiz defaults for all referenced quizzes to avoid N+1
+            $quizIds = collect($reference)
+                ->where('stepable_type', Quiz::class)
+                ->pluck('stepable_id')
+                ->unique()
+                ->values();
+
+            $quizDefaults = Quiz::whereIn('id', $quizIds)
+                ->get(['id', 'max_attempts', 'passing_percentage'])
+                ->keyBy('id');
+
             // Load existing steps keyBy composite key
             $existing = $this->steps()->get();
             $existingByKey = [];
@@ -167,7 +179,8 @@ class Enrollment extends Model
                 $key = ($r['stepable_type'] ?? '') . '|' . ($r['stepable_id'] ?? '');
                 if (!isset($existingByKey[$key])) {
                     $desiredPos = $referenceKeys[$key] ?? 0;
-                    $step = new EnrollmentStep([
+
+                    $data = [
                         'enrollment_id' => $this->id,
                         'course_id' => $this->course_id,
                         'user_id' => $userId,
@@ -176,7 +189,18 @@ class Enrollment extends Model
                         'position' => $desiredPos,
                         'is_completed' => false,
                         'is_enabled' => false,
-                    ]);
+                    ];
+
+                    // If it's a quiz step, set defaults for attempts and passing percentage
+                    if (($r['stepable_type'] ?? null) === Quiz::class) {
+                        $quiz = $quizDefaults->get($r['stepable_id'] ?? null);
+                        if ($quiz) {
+                            $data['max_attempts'] = (int) $quiz->max_attempts;
+                            $data['passing_percentage'] = (int) $quiz->passing_percentage;
+                        }
+                    }
+
+                    $step = new EnrollmentStep($data);
                     $step->save();
                     $existing->push($step);
                     $existingByKey[$key] = $step;
@@ -248,9 +272,21 @@ class Enrollment extends Model
         }
 
         $stepsData = $course->getSteps();
+
+        // Collect quiz IDs to preload their defaults (max_attempts, passing_percentage)
+        $quizIds = collect($stepsData)
+            ->where('stepable_type', Quiz::class)
+            ->pluck('stepable_id')
+            ->unique()
+            ->values();
+
+        $quizDefaults = Quiz::whereIn('id', $quizIds)
+            ->get(['id', 'max_attempts', 'passing_percentage'])
+            ->keyBy('id');
+
         $steps = [];
         foreach ($stepsData as $index => $step) {
-            $steps[] = [
+            $record = [
                 'enrollment_id' => $this->id,
                 'course_id' => $course->id,
                 'user_id' => $userId,
@@ -259,7 +295,21 @@ class Enrollment extends Model
                 'position' => $index + 1,
                 'is_completed' => false,
                 'is_enabled' => $index === 0, // Enable only the first step
+                // Ensure uniform columns for bulk insert
+                'max_attempts' => null,
+                'passing_percentage' => null,
             ];
+
+            // If the step is a Quiz, set defaults for attempts and passing percentage
+            if ($step['stepable_type'] === Quiz::class) {
+                $quiz = $quizDefaults->get($step['stepable_id']);
+                if ($quiz) {
+                    $record['max_attempts'] = (int) $quiz->max_attempts;
+                    $record['passing_percentage'] = (int) $quiz->passing_percentage;
+                }
+            }
+
+            $steps[] = $record;
         }
 
         $insertedCount = DB::table('enrollment_steps')->insertOrIgnore($steps);

@@ -16,11 +16,14 @@ class ResultState extends TestManagerState
     {
         return view('livewire.test-manager.result', [
             'quiz' => $this->manager->quiz,
+            'enrollmentStep' => $this->manager->enrollmentStep,
             'userTestAttempt' => $this->manager->userTestAttempt,
             'questions' => $this->manager->questions,
             'userAnswers' => $this->manager->userAnswers,
             'totalQuestions' => $this->manager->getTotalQuestions(),
             'currentAttemptNumber' => $this->manager->currentAttemptNumber,
+            'effectiveMaxAttempts' => $this->manager->enrollmentStep->max_attempts ?? $this->manager->quiz->max_attempts,
+            'effectivePassingPercentage' => $this->manager->enrollmentStep->passing_percentage ?? $this->manager->quiz->passing_percentage,
         ]);
     }
 

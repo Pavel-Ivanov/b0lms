@@ -23,7 +23,9 @@ class EnrollmentStep extends Model
         'is_completed',
         'is_enabled',
         'started_at',
-        'completed_at'
+        'completed_at',
+        'max_attempts',
+        'passing_percentage',
     ];
 
     protected $casts = [
@@ -31,6 +33,8 @@ class EnrollmentStep extends Model
         'is_enabled' => 'boolean',
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
+        'max_attempts' => 'integer',
+        'passing_percentage' => 'integer',
     ];
 
 

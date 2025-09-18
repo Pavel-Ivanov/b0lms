@@ -78,8 +78,57 @@ class EnrollmentResource extends Resource
                             ]),
                     ])
                     ->columns(2),
-            ])
-;
+                Section::make('План обучения')
+                    ->schema([
+                        Forms\Components\Repeater::make('steps')
+                            ->hiddenLabel()
+                            ->relationship('steps')
+                            ->schema([
+                                Forms\Components\Placeholder::make('step_title')
+                                    ->hiddenLabel()
+//                                    ->label('Шаг')
+                                    ->content(function (?array $state): string {
+                                        if (empty($state) || empty($state['stepable_type']) || empty($state['stepable_id'])) {
+                                            return '';
+                                        }
+                                        return match ($state['stepable_type']) {
+                                            \App\Models\Lesson::class => 'Урок — ' . optional(\App\Models\Lesson::find($state['stepable_id']))?->name,
+                                            \App\Models\Quiz::class => 'Тест — ' . optional(\App\Models\Quiz::find($state['stepable_id']))?->name,
+                                            default => ''
+                                        } ?? '';
+                                    })
+                                    ->columnSpanFull(),
+                                Forms\Components\TextInput::make('max_attempts')
+                                    ->label('Макс. попыток')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->maxValue(100)
+                                    ->visible(fn (Forms\Get $get) => $get('stepable_type') === \App\Models\Quiz::class)
+                                    ->helperText('Количество попыток для данного теста.'),
+                                Forms\Components\TextInput::make('passing_percentage')
+                                    ->label('Проходной балл, %')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->maxValue(100)
+                                    ->visible(fn (Forms\Get $get) => $get('stepable_type') === \App\Models\Quiz::class)
+                                    ->helperText('Минимальный процент правильных ответов для зачёта.'),
+                            ])
+                            ->deletable(false)
+                            ->addable(false)
+                            ->itemLabel(function (?array $state): ?string {
+                                if (empty($state) || empty($state['stepable_type'])) {
+                                    return '';
+                                }
+                                return match ($state['stepable_type']) {
+                                    Lesson::class => Lesson::find($state['stepable_id'])?->name,
+                                    Quiz::class => Quiz::find($state['stepable_id'])?->name,
+                                    default => '',
+                                };
+                            })
+                        ->columns(2)
+                        ])
+                    ->columnSpanFull()
+            ]);
     }
 
     public static function table(Table $table): Table

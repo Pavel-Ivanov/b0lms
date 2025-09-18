@@ -5,7 +5,7 @@
                 {{ $quiz->name }}
             </h3>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                Попытка {{ $currentAttempt }} из {{ $quiz->max_attempts }}
+                Попытка {{ $currentAttempt }} из {{ $maxAttempts }}
             </span>
         </div>
 

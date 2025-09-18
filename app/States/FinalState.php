@@ -19,6 +19,8 @@ class FinalState extends TestManagerState
             'userTestAttempt' => $this->manager->userTestAttempt,
             'enrollmentStep' => $this->manager->enrollmentStep,
             'totalQuestions' => $this->manager->getTotalQuestions(),
+            'effectiveMaxAttempts' => $this->manager->enrollmentStep->max_attempts ?? $this->manager->quiz->max_attempts,
+            'effectivePassingPercentage' => $this->manager->enrollmentStep->passing_percentage ?? $this->manager->quiz->passing_percentage,
         ]);
     }
 }
