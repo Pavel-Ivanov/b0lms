@@ -106,7 +106,7 @@ class SadminPanelProvider extends PanelProvider
                 ActivitylogPlugin::make()
                     ->navigationGroup('Администрирование')
                     ->authorize(
-                        fn () => auth()->user()->hasRole(['Superadmin'])
+                        fn () => auth()->user()->hasRole(['Superadmin', 'Администратор'])
                     )
                     ->translateLogKey(fn($label) => __("events.".$label)),
             ])
