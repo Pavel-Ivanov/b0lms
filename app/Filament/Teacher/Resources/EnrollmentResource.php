@@ -137,6 +137,8 @@ class EnrollmentResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('course.name')
                     ->label('Курс')
+                    ->limit(50)
+                    ->tooltip(fn($state): string => $state)
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
